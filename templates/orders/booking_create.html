@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Reserve — {{ laptop.brand }} {{ laptop.model_name }}{% endblock %}
+
+{% block content %}
+<div class="container-sm page-content">
+  <div class="section-heading">
+    <span class="section-label">Reserve a Unit</span>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div style="display:flex;align-items:center;gap:16px;">
+        {% if laptop.main_image %}
+          <img src="{{ laptop.main_image.url }}" style="width:72px;height:54px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--border);">
+        {% endif %}
+        <div>
+          <div style="font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;font-weight:600;">{{ laptop.brand }}</div>
+          <div style="font-weight:700;">{{ laptop.model_name }}</div>
+        </div>
+        <div class="price-tag" style="margin-left:auto;">₱{{ laptop.price|floatformat:2 }}</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div style="background:var(--accent-dim);border:1px solid rgba(201,138,75,.3);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:20px;font-size:14px;color:var(--text-secondary);">
+        📋 <strong>How Booking Works:</strong> Reserving holds 1 unit for <strong>3 days</strong>. You must complete payment before the expiry date or the unit will be released back to stock.
+      </div>
+
+      <form method="post" id="booking-form">
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label" for="id_notes">Notes <span style="color:var(--text-muted);">(optional)</span></label>
+          <textarea name="notes" id="id_notes" class="form-input" rows="2"
+                    placeholder="Any specific requirements or questions…"></textarea>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <button type="submit" class="btn btn-primary btn-lg" id="btn-confirm-booking">Confirm Reservation</button>
+          <a href="{% url 'catalog:detail' laptop.slug %}" class="btn btn-secondary btn-lg">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

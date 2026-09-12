@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load humanize static %}
+
+{% block title %}Shopping Cart{% endblock %}
+{% block extra_js %}<script src="{% static 'js/cart.js' %}"></script>{% endblock %}
+
+{% block content %}
+<div class="container page-content">
+  <div class="section-heading">
+    <span class="section-label">Your Cart</span>
+  </div>
+
+  {% if cart|length > 0 %}
+  <div class="checkout-layout">
+    <!-- Cart Items -->
+    <div>
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Subtotal</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in cart %}
+          <tr class="cart-row">
+            <td>
+              <div class="cart-product">
+                {% if item.main_image %}
+                  <img src="{{ item.main_image }}" alt="{{ item.model_name }}" class="cart-product-img">
+                {% endif %}
+                <div>
+                  <div class="cart-product-brand">{{ item.brand }}</div>
+                  <div class="cart-product-name">{{ item.model_name }}</div>
+                </div>
+              </div>
+            </td>
+            <td style="color:var(--text-secondary);font-size:14px;">₱{{ item.price|floatformat:2|intcomma }}</td>
+            <td>
+              <form method="post" action="{% url 'orders:update_cart' item.laptop_id %}">
+                {% csrf_token %}
+                <div class="qty-control">
+                  <button type="button" class="qty-btn" data-action="minus" aria-label="Decrease quantity">−</button>
+                  <input type="number" name="quantity" class="qty-input" value="{{ item.quantity }}" min="1"
+                         data-max="{{ item.laptop.stock_quantity|default:99 }}" aria-label="Quantity">
+                  <button type="button" class="qty-btn" data-action="plus" aria-label="Increase quantity">+</button>
+                </div>
+              </form>
+            </td>
+            <td class="price-tag" style="font-size:1rem;">₱{{ item.subtotal|floatformat:2|intcomma }}</td>
+            <td>
+              <form method="post" action="{% url 'orders:remove_from_cart' item.laptop_id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm" aria-label="Remove item">✕</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="order-summary-card">
+      <div class="order-summary-header"><h3>Order Summary</h3></div>
+      {% for item in cart %}
+      <div class="summary-line">
+        <span>{{ item.brand }} {{ item.model_name }} ×{{ item.quantity }}</span>
+        <span>₱{{ item.subtotal|floatformat:2|intcomma }}</span>
+      </div>
+      {% endfor %}
+      <div class="summary-line" style="color:var(--text-muted);font-size:13px;border-top:1px solid var(--border);">
+        <span>Shipping</span><span>TBD at checkout</span>
+      </div>
+      <div class="summary-total">
+        <span>Total</span>
+        <span>₱{{ cart.total_price|floatformat:2|intcomma }}</span>
+      </div>
+      <div class="summary-actions">
+        {% if user.is_authenticated %}
+          <a href="{% url 'orders:checkout' %}" class="btn btn-primary btn-full btn-lg" id="btn-checkout">
+            Proceed to Checkout
+          </a>
+        {% else %}
+          <a href="{% url 'accounts:login' %}?next={% url 'orders:checkout' %}" class="btn btn-primary btn-full btn-lg" id="btn-checkout">
+            Sign in to Checkout
+          </a>
+        {% endif %}
+        <a href="{% url 'catalog:list' %}" class="btn btn-secondary btn-full" style="margin-top:10px;">Continue Shopping</a>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🛒</div>
+    <h3>Your cart is empty</h3>
+    <p>Add some laptops to get started.</p>
+    <a href="{% url 'catalog:list' %}" class="btn btn-primary mt-16">Browse Laptops</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

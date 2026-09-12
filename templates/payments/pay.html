@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Pay for Order #{{ order.pk }}{% endblock %}
+
+{% block content %}
+<div class="container-sm page-content">
+  <div class="section-heading">
+    <span class="section-label">Complete Payment</span>
+  </div>
+
+  <div class="checkout-layout">
+    <div>
+      <div class="card">
+        <div class="card-header"><h3 style="font-size:.95rem;">Choose Payment Method</h3></div>
+        <div class="card-body">
+          <form method="post" id="payment-form">
+            {% csrf_token %}
+            <div class="form-group">
+              <label class="form-label">Payment Method</label>
+              {% for val, label in methods %}
+              <div class="filter-option" style="margin-bottom:12px;">
+                <input type="radio" name="method" id="method-{{ val }}" value="{{ val }}"
+                       {% if forloop.first %}checked{% endif %}>
+                <label for="method-{{ val }}" style="font-size:14px;color:var(--text-primary);">{{ label }}</label>
+              </div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group" id="ref-group">
+              <label class="form-label" for="id_reference">Reference Number
+                <span style="color:var(--text-muted);font-size:11px;">(for bank transfer / GCash)</span>
+              </label>
+              <input type="text" name="reference_number" id="id_reference" class="form-input"
+                     placeholder="Transaction ID or confirmation code">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="id_payment_notes">Notes <span style="color:var(--text-muted);">(optional)</span></label>
+              <textarea name="notes" id="id_payment_notes" class="form-input" rows="2"
+                        placeholder="Any additional info for the admin…"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg btn-full" id="btn-submit-payment">
+              Submit Payment
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="order-summary-card">
+      <div class="order-summary-header"><h3>Order #{{ order.pk }}</h3></div>
+      {% for item in order.items.all %}
+      <div class="summary-line">
+        <span>{{ item.quantity }}× {{ item.laptop.brand|truncatechars:20 }}</span>
+        <span>₱{{ item.subtotal|floatformat:2|intcomma }}</span>
+      </div>
+      {% endfor %}
+      <div class="summary-total">
+        <span>Amount Due</span>
+        <span>₱{{ order.total_amount|floatformat:2|intcomma }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bank Details -->
+  <div class="card" style="margin-top:24px;">
+    <div class="card-header"><h3 style="font-size:.9rem;">Bank Transfer Details</h3></div>
+    <div class="card-body">
+      <table class="spec-table">
+        <tr><td>Bank</td><td>BDO / BPI / UnionBank</td></tr>
+        <tr><td>Account Name</td><td>LaptopStore Inc.</td></tr>
+        <tr><td>Account Number</td><td class="font-mono">1234-5678-9012</td></tr>
+        <tr><td>GCash Number</td><td class="font-mono">0917 000 0000</td></tr>
+      </table>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:12px;">
+        After transferring, enter your reference/transaction number above.
+        Our team will verify within 1–2 business days.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+// Toggle reference field visibility for COD
+document.querySelectorAll('input[name="method"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    const refGroup = document.getElementById('ref-group');
+    refGroup.style.display = radio.value === 'COD' ? 'none' : 'block';
+  });
+});
+// Initial state
+const firstMethod = document.querySelector('input[name="method"]:checked');
+if (firstMethod && firstMethod.value === 'COD') {
+  document.getElementById('ref-group').style.display = 'none';
+}
+</script>
+{% endblock %}

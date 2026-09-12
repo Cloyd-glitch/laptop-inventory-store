@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Order #{{ order.pk }}{% endblock %}
+
+{% block content %}
+<div class="container-sm page-content">
+  <div class="flex-between" style="margin-bottom:24px;">
+    <h1 style="font-size:1.5rem;">Order #{{ order.pk }}</h1>
+    <span class="status-badge status-{{ order.status }}">{{ order.get_status_display }}</span>
+  </div>
+
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-header"><h3 style="font-size:.9rem;">Items</h3></div>
+    {% for item in order.items.all %}
+    <div class="summary-line">
+      <div style="display:flex;align-items:center;gap:12px;">
+        {% if item.laptop and item.laptop.main_image %}
+          <img src="{{ item.laptop.main_image.url }}" style="width:48px;height:36px;object-fit:cover;border-radius:4px;border:1px solid var(--border);">
+        {% endif %}
+        <span>{{ item.quantity }}× {{ item.laptop.brand }} {{ item.laptop.model_name }}</span>
+      </div>
+      <span>₱{{ item.subtotal|floatformat:2|intcomma }}</span>
+    </div>
+    {% endfor %}
+    <div class="summary-total">
+      <span>Total</span>
+      <span>₱{{ order.total_amount|floatformat:2|intcomma }}</span>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><h3 style="font-size:.9rem;">Shipping Address</h3></div>
+      <div class="card-body" style="font-size:14px;color:var(--text-secondary);white-space:pre-line;">{{ order.shipping_address }}</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3 style="font-size:.9rem;">Payment</h3></div>
+      <div class="card-body">
+        {% if order.payment %}
+          <span class="status-badge status-{{ order.payment.status }}">{{ order.payment.get_status_display }}</span>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:8px;">{{ order.payment.get_method_display }}</div>
+          {% if order.payment.reference_number %}
+          <div style="font-size:13px;color:var(--text-muted);">Ref: {{ order.payment.reference_number }}</div>
+          {% endif %}
+        {% else %}
+          <p style="font-size:14px;color:var(--text-muted);">No payment submitted yet.</p>
+          <a href="{% url 'payments:pay' order.pk %}" class="btn btn-primary btn-sm mt-8">Pay Now</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% if order.notes %}
+  <div class="card" style="margin-top:20px;">
+    <div class="card-header"><h3 style="font-size:.9rem;">Order Notes</h3></div>
+    <div class="card-body" style="font-size:14px;color:var(--text-secondary);">{{ order.notes }}</div>
+  </div>
+  {% endif %}
+
+  <div style="margin-top:24px;">
+    <a href="{% url 'accounts:my_orders' %}" class="btn btn-secondary">← Back to Orders</a>
+  </div>
+</div>
+{% endblock %}

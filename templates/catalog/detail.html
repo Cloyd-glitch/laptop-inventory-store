@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block title %}{{ laptop.brand }} {{ laptop.model_name }}{% endblock %}
+{% block meta_description %}{{ laptop.brand }} {{ laptop.model_name }} — {{ laptop.processor }}, {{ laptop.ram }}, {{ laptop.storage }}. Buy or book at LaptopStore.{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/gallery.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container page-content">
+  <!-- Breadcrumb -->
+  <nav aria-label="Breadcrumb" style="font-size:13px;color:var(--text-muted);margin-bottom:24px;">
+    <a href="{% url 'catalog:list' %}">Browse</a>
+    <span style="margin:0 8px;opacity:.4;">›</span>
+    <span>{{ laptop.brand }}</span>
+    <span style="margin:0 8px;opacity:.4;">›</span>
+    <span style="color:var(--text-primary);">{{ laptop.model_name }}</span>
+  </nav>
+
+  <div class="detail-layout">
+    <!-- Left: Images -->
+    <div>
+      <img id="main-gallery-img"
+           src="{{ laptop.main_image.url }}"
+           alt="{{ laptop.brand }} {{ laptop.model_name }}"
+           class="detail-main-image">
+
+      {% if gallery %}
+      <div class="gallery-strip" role="list" aria-label="Additional images">
+        <!-- Main image as first thumb -->
+        <img src="{{ laptop.main_image.url }}"
+             class="gallery-thumb active"
+             data-full="{{ laptop.main_image.url }}"
+             alt="Main view"
+             role="listitem">
+        {% for img in gallery %}
+        <img src="{{ img.image.url }}"
+             class="gallery-thumb"
+             data-full="{{ img.image.url }}"
+             alt="{{ img.caption|default:'Gallery image' }}"
+             role="listitem">
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Right: Details -->
+    <div>
+      <div class="laptop-brand-tag">{{ laptop.brand }}</div>
+      <h1 class="laptop-detail-name">{{ laptop.model_name }}</h1>
+
+      <!-- Condition + Stock -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+        <span class="laptop-card-badge {% if laptop.condition == 'NEW' %}new{% elif laptop.condition == 'REFURB' %}refurb{% else %}used{% endif %}">
+          {{ laptop.get_condition_display }}
+        </span>
+        {% if laptop.in_stock %}
+          <span class="stock-indicator in-stock">
+            <span class="stock-dot"></span>{{ laptop.stock_quantity }} in stock
+          </span>
+        {% else %}
+          <span class="stock-indicator out-stock">
+            <span class="stock-dot"></span>Out of Stock
+          </span>
+        {% endif %}
+      </div>
+
+      <!-- Price -->
+      <div class="detail-price">
+        <span class="price-currency">₱</span>{{ laptop.price|intcomma }}
+      </div>
+
+      <!-- Specs Table -->
+      <table class="spec-table" aria-label="Laptop specifications">
+        <tbody>
+          {% if laptop.processor %}
+          <tr><td>Processor</td><td>{{ laptop.processor }}</td></tr>
+          {% endif %}
+          {% if laptop.ram %}
+          <tr><td>RAM</td><td>{{ laptop.ram }}</td></tr>
+          {% endif %}
+          {% if laptop.storage %}
+          <tr><td>Storage</td><td>{{ laptop.storage }}</td></tr>
+          {% endif %}
+          {% if laptop.gpu %}
+          <tr><td>GPU</td><td>{{ laptop.gpu }}</td></tr>
+          {% endif %}
+          {% if laptop.screen_size %}
+          <tr><td>Screen</td><td>{{ laptop.screen_size }}</td></tr>
+          {% endif %}
+          {% if laptop.operating_system %}
+          <tr><td>OS</td><td>{{ laptop.operating_system }}</td></tr>
+          {% endif %}
+          {% if laptop.category %}
+          <tr><td>Category</td><td>{{ laptop.category }}</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+
+      {% if laptop.description %}
+      <p style="color:var(--text-secondary);font-size:14px;line-height:1.75;margin-bottom:24px;">{{ laptop.description }}</p>
+      {% endif %}
+
+      <!-- Actions -->
+      {% if laptop.in_stock %}
+      <div class="detail-actions">
+        <!-- Add to Cart -->
+        <form method="post" action="{% url 'orders:add_to_cart' laptop.pk %}">
+          {% csrf_token %}
+          <input type="hidden" name="quantity" value="1">
+          <input type="hidden" name="next" value="{{ request.path }}">
+          <button type="submit" class="btn btn-primary btn-lg" id="btn-add-cart-{{ laptop.pk }}">
+            🛒 Add to Cart
+          </button>
+        </form>
+
+        <!-- Book / Reserve -->
+        {% if user.is_authenticated %}
+        <a href="{% url 'orders:booking_create' laptop.pk %}" class="btn btn-secondary btn-lg" id="btn-book-{{ laptop.pk }}">
+          📋 Reserve Unit
+        </a>
+        {% else %}
+        <a href="{% url 'accounts:login' %}?next={% url 'catalog:detail' laptop.slug %}" class="btn btn-secondary btn-lg">
+          Sign in to Reserve
+        </a>
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="detail-actions">
+        <button class="btn btn-secondary btn-lg" disabled>Out of Stock</button>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Related Laptops -->
+  {% if related %}
+  <div style="margin-top:60px;">
+    <div class="section-heading">
+      <span class="section-label">You may also like</span>
+    </div>
+    <div class="grid-4">
+      {% for laptop in related %}
+        {% include 'partials/_laptop_card.html' with laptop=laptop %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

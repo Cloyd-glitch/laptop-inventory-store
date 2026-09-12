@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Cancel Booking #{{ booking.pk }}{% endblock %}
+
+{% block content %}
+<div class="container-sm page-content" style="max-width:480px;">
+  <div class="card" style="text-align:center;">
+    <div class="card-body">
+      <div style="font-size:48px;margin-bottom:16px;">⚠️</div>
+      <h2>Cancel Booking?</h2>
+      <p style="color:var(--text-muted);margin:12px 0 24px;">
+        This will cancel Booking #{{ booking.pk }} for
+        <strong>{{ booking.laptop.brand }} {{ booking.laptop.model_name }}</strong>
+        and restore the unit to stock.
+      </p>
+      <div style="display:flex;gap:12px;justify-content:center;">
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger" id="btn-confirm-cancel">Yes, Cancel Booking</button>
+        </form>
+        <a href="{% url 'accounts:my_bookings' %}" class="btn btn-secondary">Keep Booking</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

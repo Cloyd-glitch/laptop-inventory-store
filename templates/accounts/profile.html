@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container page-content">
+  <div class="profile-header">
+    <div class="avatar-circle">
+      {% if user.avatar %}
+        <img src="{{ user.avatar.url }}" alt="{{ user.username }}">
+      {% else %}
+        {{ user.username|first|upper }}
+      {% endif %}
+    </div>
+    <div>
+      <h1 style="font-size:1.5rem;">{{ user.full_name }}</h1>
+      <p style="color:var(--text-muted);font-size:14px;">@{{ user.username }} · {{ user.get_role_display }}</p>
+      {% if user.email %}<p style="color:var(--text-secondary);font-size:14px;">{{ user.email }}</p>{% endif %}
+    </div>
+    <a href="{% url 'accounts:profile_edit' %}" class="btn btn-secondary" id="btn-edit-profile" style="margin-left:auto;">Edit Profile</a>
+  </div>
+
+  <div class="grid-3" style="gap:16px;margin-bottom:40px;">
+    <div class="card">
+      <div class="card-body" style="text-align:center;">
+        <div style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:var(--accent);">{{ user.orders.count }}</div>
+        <div style="color:var(--text-muted);font-size:13px;text-transform:uppercase;letter-spacing:.5px;">Orders</div>
+        <a href="{% url 'accounts:my_orders' %}" class="btn btn-secondary btn-sm" style="margin-top:12px;">View Orders</a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body" style="text-align:center;">
+        <div style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:var(--accent);">{{ user.bookings.count }}</div>
+        <div style="color:var(--text-muted);font-size:13px;text-transform:uppercase;letter-spacing:.5px;">Bookings</div>
+        <a href="{% url 'accounts:my_bookings' %}" class="btn btn-secondary btn-sm" style="margin-top:12px;">View Bookings</a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body" style="text-align:center;">
+        <div style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:var(--accent);">
+          {% if user.phone %}📱{% else %}—{% endif %}
+        </div>
+        <div style="color:var(--text-muted);font-size:13px;text-transform:uppercase;letter-spacing:.5px;">Phone</div>
+        <div style="color:var(--text-secondary);font-size:13px;margin-top:12px;">{{ user.phone|default:"Not set" }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Info -->
+  <div class="card">
+    <div class="card-header"><h3 style="font-size:.9rem;">Account Details</h3></div>
+    <div class="card-body">
+      <table class="spec-table">
+        <tr><td>Username</td><td>{{ user.username }}</td></tr>
+        <tr><td>Full Name</td><td>{{ user.full_name|default:"—" }}</td></tr>
+        <tr><td>Email</td><td>{{ user.email|default:"—" }}</td></tr>
+        <tr><td>Phone</td><td>{{ user.phone|default:"—" }}</td></tr>
+        <tr><td>Address</td><td>{{ user.address|default:"—" }}</td></tr>
+        <tr><td>Role</td><td>{{ user.get_role_display }}</td></tr>
+        <tr><td>Member since</td><td>{{ user.date_joined|date:"F d, Y" }}</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

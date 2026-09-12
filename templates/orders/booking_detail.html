@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Booking #{{ booking.pk }}{% endblock %}
+
+{% block content %}
+<div class="container-sm page-content">
+  <div class="flex-between" style="margin-bottom:24px;">
+    <h1 style="font-size:1.5rem;">Booking #{{ booking.pk }}</h1>
+    <span class="status-badge status-{{ booking.status }}">{{ booking.get_status_display }}</span>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <table class="spec-table">
+        <tr><td>Laptop</td><td>{{ booking.laptop.brand }} {{ booking.laptop.model_name }}</td></tr>
+        <tr><td>Quantity</td><td>{{ booking.quantity }}</td></tr>
+        <tr><td>Price</td><td class="price-tag" style="font-size:1rem;">₱{{ booking.laptop.price|intcomma }}</td></tr>
+        <tr><td>Booked On</td><td>{{ booking.created_at|date:"F d, Y" }}</td></tr>
+        <tr><td>Expires On</td><td style="color:var(--warning);">{{ booking.expires_at|date:"F d, Y H:i" }}</td></tr>
+        {% if booking.notes %}<tr><td>Notes</td><td>{{ booking.notes }}</td></tr>{% endif %}
+      </table>
+    </div>
+  </div>
+
+  <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;">
+    <a href="{% url 'accounts:my_bookings' %}" class="btn btn-secondary">← My Bookings</a>
+    {% if booking.status in 'PENDING CONFIRMED' %}
+    <form method="post" action="{% url 'orders:booking_cancel' booking.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger" onclick="return confirm('Cancel this booking?')">Cancel Booking</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Payment Status — Order #{{ payment.order_id }}{% endblock %}
+
+{% block content %}
+<div class="container-sm page-content" style="text-align:center;">
+  {% if payment.status == 'VERIFIED' %}
+    <div class="confirm-icon">💳✅</div>
+    <h1>Payment Verified!</h1>
+    <p style="color:var(--text-muted);margin-top:8px;">Your payment of <strong class="text-accent">₱{{ payment.amount|floatformat:2|intcomma }}</strong> has been confirmed.</p>
+  {% elif payment.status == 'FAILED' %}
+    <div class="confirm-icon">❌</div>
+    <h1>Payment Failed</h1>
+    <p style="color:var(--text-muted);margin-top:8px;">Your payment could not be verified. Please contact support.</p>
+  {% else %}
+    <div class="confirm-icon" style="filter:drop-shadow(0 0 20px rgba(201,138,75,.4));">⏳</div>
+    <h1>Awaiting Verification</h1>
+    <p style="color:var(--text-muted);margin-top:8px;">Your payment has been submitted and is pending admin verification.</p>
+  {% endif %}
+
+  <div class="card" style="text-align:left;margin:28px 0;">
+    <div class="card-body">
+      <table class="spec-table">
+        <tr><td>Payment ID</td><td>#{{ payment.pk }}</td></tr>
+        <tr><td>Order</td><td>#{{ payment.order_id }}</td></tr>
+        <tr><td>Method</td><td>{{ payment.get_method_display }}</td></tr>
+        <tr><td>Amount</td><td class="price-tag" style="font-size:1rem;">₱{{ payment.amount|floatformat:2|intcomma }}</td></tr>
+        {% if payment.reference_number %}
+        <tr><td>Reference</td><td class="font-mono">{{ payment.reference_number }}</td></tr>
+        {% endif %}
+        <tr><td>Status</td><td><span class="status-badge status-{{ payment.status }}">{{ payment.get_status_display }}</span></td></tr>
+        {% if payment.paid_at %}
+        <tr><td>Verified At</td><td>{{ payment.paid_at|date:"M d, Y H:i" }}</td></tr>
+        {% endif %}
+      </table>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+    <a href="{% url 'orders:order_detail' payment.order_id %}" class="btn btn-secondary">View Order</a>
+    <a href="{% url 'accounts:my_orders' %}" class="btn btn-secondary">My Orders</a>
+    <a href="{% url 'catalog:list' %}" class="btn btn-primary">Continue Shopping</a>
+  </div>
+</div>
+{% endblock %}

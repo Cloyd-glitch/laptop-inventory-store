@@ -1,0 +1,40 @@
+{% load humanize %}
+<article class="laptop-card" aria-label="{{ laptop.brand }} {{ laptop.model_name }}">
+  <a href="{% url 'catalog:detail' laptop.slug %}" class="laptop-card-img-wrap" tabindex="-1" aria-hidden="true">
+    {% if laptop.main_image %}
+      <img src="{{ laptop.main_image.url }}" alt="{{ laptop.brand }} {{ laptop.model_name }}" loading="lazy">
+    {% else %}
+      <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+    {% endif %}
+    <span class="laptop-card-badge {% if laptop.condition == 'NEW' %}new{% elif laptop.condition == 'REFURB' %}refurb{% else %}used{% endif %}">
+      {{ laptop.get_condition_display }}
+    </span>
+  </a>
+
+  <div class="laptop-card-body">
+    <div class="laptop-card-brand">{{ laptop.brand }}</div>
+    <a href="{% url 'catalog:detail' laptop.slug %}" class="laptop-card-name" style="color:inherit;">
+      {{ laptop.model_name }}
+    </a>
+    <div class="laptop-card-specs">
+      {% if laptop.processor %}<span class="spec-chip">{{ laptop.processor|truncatechars:20 }}</span>{% endif %}
+      {% if laptop.ram      %}<span class="spec-chip">{{ laptop.ram }}</span>{% endif %}
+      {% if laptop.storage  %}<span class="spec-chip">{{ laptop.storage }}</span>{% endif %}
+    </div>
+  </div>
+
+  <div class="laptop-card-footer">
+    <div class="price-tag">
+      <span class="price-currency">₱</span>{{ laptop.price|intcomma }}
+    </div>
+    {% if laptop.in_stock %}
+      <a href="{% url 'catalog:detail' laptop.slug %}" class="btn btn-primary btn-sm" id="card-view-{{ laptop.pk }}">
+        View
+      </a>
+    {% else %}
+      <span class="out-of-stock-badge">Out of Stock</span>
+    {% endif %}
+  </div>
+</article>

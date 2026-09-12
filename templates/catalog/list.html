@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block title %}Browse Laptops{% endblock %}
+{% block meta_description %}Browse our curated inventory of new, used, and refurbished laptops. Filter by brand, specs, and price.{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/filter.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero">
+  <h1>Premium Laptop Inventory</h1>
+  <p>Curated machines. Verified specs. Honest prices.</p>
+  <form id="filter-form" method="get" action="" class="search-bar" style="max-width:520px;margin:0 auto;" role="search">
+    {% for key, value in request.GET.items %}
+      {% if key != 'q' and key != 'page' %}
+        <input type="hidden" name="{{ key }}" value="{{ value }}">
+      {% endif %}
+    {% endfor %}
+    <input type="text" name="q" id="search-input" value="{{ query }}" placeholder="Search brand, model, processor…" aria-label="Search laptops">
+    <button type="submit" aria-label="Search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </button>
+  </form>
+</section>
+
+<div class="container page-content" style="padding-top:0;">
+  <div class="catalog-layout">
+
+    <!-- Filter Sidebar -->
+    <aside id="filter-sidebar" aria-label="Filters">
+      <button class="btn btn-secondary btn-sm" id="filter-toggle" style="display:none;width:100%;margin-bottom:12px;">Show Filters</button>
+      <form id="filter-form" method="get" action="" class="filter-sidebar">
+        <!-- Preserve search query -->
+        {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+
+        <div class="filter-sidebar-header">⚙ Filters</div>
+
+        <!-- Category -->
+        <div class="filter-section">
+          <div class="filter-section-title">Category</div>
+          <div class="filter-option">
+            <input type="radio" name="category" id="cat-all" value="" {% if not selected_category %}checked{% endif %}>
+            <label for="cat-all">All Categories</label>
+          </div>
+          {% for cat in categories %}
+          <div class="filter-option">
+            <input type="radio" name="category" id="cat-{{ cat.slug }}" value="{{ cat.slug }}" {% if selected_category == cat.slug %}checked{% endif %}>
+            <label for="cat-{{ cat.slug }}">{{ cat.name }}</label>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Brand -->
+        <div class="filter-section">
+          <div class="filter-section-title">Brand</div>
+          <div class="filter-option">
+            <input type="radio" name="brand" id="brand-all" value="" {% if not selected_brand %}checked{% endif %}>
+            <label for="brand-all">All Brands</label>
+          </div>
+          {% for b in brands %}
+          <div class="filter-option">
+            <input type="radio" name="brand" id="brand-{{ b|slugify }}" value="{{ b }}" {% if selected_brand == b %}checked{% endif %}>
+            <label for="brand-{{ b|slugify }}">{{ b }}</label>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Condition -->
+        <div class="filter-section">
+          <div class="filter-section-title">Condition</div>
+          <div class="filter-option">
+            <input type="radio" name="condition" id="cond-all" value="" {% if not selected_condition %}checked{% endif %}>
+            <label for="cond-all">Any Condition</label>
+          </div>
+          {% for val, label in conditions %}
+          <div class="filter-option">
+            <input type="radio" name="condition" id="cond-{{ val }}" value="{{ val }}" {% if selected_condition == val %}checked{% endif %}>
+            <label for="cond-{{ val }}">{{ label }}</label>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Price Range -->
+        <div class="filter-section">
+          <div class="filter-section-title">Price Range (₱)</div>
+          <div class="price-range">
+            <input type="number" name="min_price" class="form-input" placeholder="Min" value="{{ min_price }}" min="0" id="min-price">
+            <span class="price-range-sep">—</span>
+            <input type="number" name="max_price" class="form-input" placeholder="Max" value="{{ max_price }}" min="0" id="max-price">
+          </div>
+          <button type="submit" class="btn btn-secondary btn-sm btn-full" style="margin-top:10px;">Apply Price</button>
+        </div>
+
+        <!-- Clear -->
+        <div class="filter-section" style="padding-top:8px;padding-bottom:8px;">
+          <a href="{% url 'catalog:list' %}" class="btn btn-secondary btn-sm btn-full">✕ Clear All Filters</a>
+        </div>
+      </form>
+    </aside>
+
+    <!-- Main Content -->
+    <div>
+      <!-- Catalog Header -->
+      <div class="catalog-header">
+        <div>
+          <h2 style="font-size:1.1rem;margin-bottom:2px;">
+            {% if query %}Results for "{{ query }}"{% else %}All Laptops{% endif %}
+          </h2>
+          <span class="catalog-count">{{ total_count }} laptop{{ total_count|pluralize }} found</span>
+        </div>
+        <select id="sort-select" name="sort" form="filter-form" class="sort-select" aria-label="Sort laptops">
+          <option value="newest"    {% if sort == 'newest'    %}selected{% endif %}>Newest First</option>
+          <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+          <option value="price_desc"{% if sort == 'price_desc'%}selected{% endif %}>Price: High to Low</option>
+          <option value="name_asc"  {% if sort == 'name_asc'  %}selected{% endif %}>Name A–Z</option>
+        </select>
+      </div>
+
+      <!-- Laptop Grid -->
+      {% if page_obj %}
+      <div class="grid-4" id="laptop-grid">
+        {% for laptop in page_obj %}
+          {% include 'partials/_laptop_card.html' with laptop=laptop %}
+        {% endfor %}
+      </div>
+
+      <!-- Pagination -->
+      {% if page_obj.has_other_pages %}
+      <nav class="pagination" aria-label="Pagination">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" class="page-link" aria-label="Previous">‹</a>
+        {% else %}
+          <span class="page-link disabled" aria-disabled="true">‹</span>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <span class="page-link active" aria-current="page">{{ num }}</span>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}" class="page-link">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}" class="page-link" aria-label="Next">›</a>
+        {% else %}
+          <span class="page-link disabled" aria-disabled="true">›</span>
+        {% endif %}
+      </nav>
+      {% endif %}
+
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h3>No laptops found</h3>
+        <p>Try adjusting your filters or search term.</p>
+        <a href="{% url 'catalog:list' %}" class="btn btn-primary mt-16">Clear Filters</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

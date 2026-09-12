@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}My Bookings{% endblock %}
+
+{% block content %}
+<div class="container page-content">
+  <div class="section-heading">
+    <span class="section-label">My Bookings</span>
+  </div>
+
+  {% if bookings %}
+  <div style="display:flex;flex-direction:column;gap:16px;">
+    {% for booking in bookings %}
+    <div class="card">
+      <div class="card-header">
+        <div class="flex-between">
+          <span style="font-weight:700;">Booking #{{ booking.pk }}</span>
+          <span class="status-badge status-{{ booking.status }}">{{ booking.get_status_display }}</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;align-items:center;gap:16px;">
+          {% if booking.laptop.main_image %}
+          <img src="{{ booking.laptop.main_image.url }}" alt="{{ booking.laptop }}"
+               style="width:80px;height:60px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--border);">
+          {% endif %}
+          <div style="flex:1;">
+            <div style="font-weight:700;">{{ booking.laptop.brand }} {{ booking.laptop.model_name }}</div>
+            <div style="font-size:13px;color:var(--text-muted);">Qty: {{ booking.quantity }}</div>
+            {% if booking.status == 'CONFIRMED' %}
+            <div style="font-size:13px;color:var(--warning);margin-top:4px;">
+              ⏳ Reserved until {{ booking.expires_at|date:"M d, Y" }}
+            </div>
+            {% endif %}
+          </div>
+          <div style="text-align:right;">
+            <div class="price-tag" style="font-size:1.1rem;">₱{{ booking.laptop.price|floatformat:2 }}</div>
+          </div>
+        </div>
+        {% if booking.notes %}
+        <div style="margin-top:12px;font-size:13px;color:var(--text-muted);font-style:italic;">
+          Notes: {{ booking.notes }}
+        </div>
+        {% endif %}
+        {% if booking.status in 'PENDING CONFIRMED' %}
+        <div class="divider" style="margin:12px 0;"></div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <form method="post" action="{% url 'orders:booking_cancel' booking.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm" id="btn-cancel-booking-{{ booking.pk }}"
+                    onclick="return confirm('Cancel this booking?')">Cancel Booking</button>
+          </form>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">📋</div>
+    <h3>No bookings yet</h3>
+    <p>Reserve a unit before purchase to hold it for 3 days.</p>
+    <a href="{% url 'catalog:list' %}" class="btn btn-primary mt-16">Browse Laptops</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

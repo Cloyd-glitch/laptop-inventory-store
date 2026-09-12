@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="container page-content">
+  <div class="section-heading">
+    <span class="section-label">Checkout</span>
+  </div>
+
+  <div class="checkout-layout">
+    <!-- Left: Shipping & Notes -->
+    <div>
+      <div class="card">
+        <div class="card-header"><h3 style="font-size:.95rem;">Shipping Information</h3></div>
+        <div class="card-body">
+          <form method="post" id="checkout-form">
+            {% csrf_token %}
+            <div class="form-group">
+              <label class="form-label" for="id_shipping_address">Shipping Address *</label>
+              <textarea name="shipping_address" id="id_shipping_address" class="form-input"
+                        rows="4" required placeholder="Street, Barangay, City, Province, ZIP">{{ initial_address }}</textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="id_notes">Order Notes <span style="color:var(--text-muted);">(optional)</span></label>
+              <textarea name="notes" id="id_notes" class="form-input" rows="2"
+                        placeholder="Special instructions, preferred delivery time…"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg btn-full" id="btn-place-order">
+              Place Order
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Summary -->
+    <div class="order-summary-card">
+      <div class="order-summary-header"><h3>Order Summary</h3></div>
+      {% for item in cart %}
+      <div class="summary-line">
+        <span>{{ item.brand }} {{ item.model_name }} ×{{ item.quantity }}</span>
+        <span>₱{{ item.subtotal|floatformat:2|intcomma }}</span>
+      </div>
+      {% endfor %}
+      <div class="summary-total">
+        <span>Total</span>
+        <span>₱{{ cart.total_price|floatformat:2|intcomma }}</span>
+      </div>
+      <div style="padding:12px 22px;">
+        <a href="{% url 'orders:cart' %}" class="btn btn-secondary btn-full btn-sm">← Edit Cart</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

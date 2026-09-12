@@ -1,0 +1,42 @@
+<footer class="footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-grid">
+      <!-- Brand -->
+      <div>
+        <div class="footer-brand">Laptop<span>Store</span></div>
+        <p>Curated laptops with honest specs and premium service. Your trusted source for new, used, and refurbished machines.</p>
+      </div>
+
+      <!-- Quick Links -->
+      <div>
+        <div class="footer-heading">Quick Links</div>
+        <ul>
+          <li><a href="{% url 'catalog:list' %}">Browse Laptops</a></li>
+          {% if user.is_authenticated %}
+          <li><a href="{% url 'accounts:my_orders' %}">My Orders</a></li>
+          <li><a href="{% url 'accounts:my_bookings' %}">My Bookings</a></li>
+          <li><a href="{% url 'accounts:profile' %}">My Profile</a></li>
+          {% else %}
+          <li><a href="{% url 'accounts:signup' %}">Create Account</a></li>
+          <li><a href="{% url 'accounts:login' %}">Sign In</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <div class="footer-heading">Contact</div>
+        <ul>
+          <li>📧 support@laptopstore.com</li>
+          <li>📞 +63 900 000 0000</li>
+          <li>📍 Metro Manila, Philippines</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-copy">© {% now "Y" %} LaptopStore. All rights reserved.</span>
+      <span class="footer-copy">Built with Django · Skeuomorphic Dark UI</span>
+    </div>
+  </div>
+</footer>

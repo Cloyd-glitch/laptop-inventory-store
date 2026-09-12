@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Order #{{ order.pk }} Confirmed{% endblock %}
+
+{% block content %}
+<div class="container-sm page-content" style="text-align:center;">
+  <div class="confirm-icon">✅</div>
+  <h1>Order Confirmed!</h1>
+  <p style="color:var(--text-muted);margin:12px 0 8px;">Order <strong style="color:var(--accent);">#{{ order.pk }}</strong> has been placed.</p>
+  <p style="color:var(--text-muted);font-size:14px;margin-bottom:32px;">
+    A confirmation email has been sent to <strong>{{ order.customer.email }}</strong>.
+  </p>
+
+  <div class="card" style="text-align:left;margin-bottom:24px;">
+    <div class="card-header"><h3 style="font-size:.9rem;">Order Summary</h3></div>
+    {% for item in order.items.all %}
+    <div class="summary-line">
+      <span>{{ item.quantity }}× {{ item.laptop.brand }} {{ item.laptop.model_name }}</span>
+      <span>₱{{ item.subtotal|floatformat:2|intcomma }}</span>
+    </div>
+    {% endfor %}
+    <div class="summary-total">
+      <span>Total</span>
+      <span>₱{{ order.total_amount|floatformat:2|intcomma }}</span>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+    <a href="{% url 'payments:pay' order.pk %}" class="btn btn-primary btn-lg" id="btn-pay-now">
+      💳 Pay Now
+    </a>
+    <a href="{% url 'orders:order_detail' order.pk %}" class="btn btn-secondary btn-lg">View Order</a>
+    <a href="{% url 'catalog:list' %}" class="btn btn-secondary">Continue Shopping</a>
+  </div>
+</div>
+{% endblock %}
