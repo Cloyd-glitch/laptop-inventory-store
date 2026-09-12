@@ -1,9 +1,21 @@
-{% extends "admin/base_site.html" %}
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} — LaptopStore Admin{% endblock %}
 
 {% block branding %}
 <h1 id="site-name">
   <a href="{% url 'admin:index' %}">
-    🖥 LaptopStore <span style="color:#c98a4b;font-weight:400;">Admin</span>
+    🖥 Laptop<span style="color:#c98a4b;font-weight:500;">Store</span>
+    <span style="font-size:11px;font-weight:400;color:#8a8278;letter-spacing:1.5px;text-transform:uppercase;margin-left:8px;vertical-align:middle;">Admin</span>
   </a>
 </h1>
 {% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="{% static 'css/admin_theme.css' %}">
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
