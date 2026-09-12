@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'orders',
     'payments',
     'notifications',
+    'staff_panel',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'

@@ -1,0 +1,65 @@
+{% extends "staff_panel/base.html" %}
+{% load humanize %}
+
+{% block page_title %}Verify Payment #{{ payment.pk }}{% endblock %}
+
+{% block content %}
+<div class="sp-form-card" style="margin: 0 auto; max-width: 800px;">
+  
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px; padding-bottom:24px; border-bottom:1px solid var(--border);">
+    <div>
+      <div style="font-size:14px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Current Status</div>
+      <span class="sp-badge sp-badge-{% if payment.status == 'VERIFIED' %}success{% elif payment.status == 'FAILED' %}danger{% else %}warning{% endif %}" style="font-size:16px; padding:8px 16px;">
+        {{ payment.get_status_display }}
+      </span>
+    </div>
+    
+    <div style="text-align:right;">
+      <div style="font-size:14px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Amount</div>
+      <div style="font-size:32px; font-family:'Outfit',sans-serif; font-weight:800; color:var(--text-primary); line-height:1;">₱{{ payment.amount|intcomma }}</div>
+    </div>
+  </div>
+  
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:32px; margin-bottom:40px;">
+    <div>
+      <h3 style="margin-top:0; border-bottom:1px solid var(--border); padding-bottom:12px; color:var(--accent);">Transaction Details</h3>
+      <table class="sp-table" style="margin-top:16px;">
+        <tr><td style="padding:12px; font-weight:600; color:var(--text-muted);">Method</td><td style="padding:12px;">{{ payment.get_method_display }}</td></tr>
+        <tr><td style="padding:12px; font-weight:600; color:var(--text-muted);">Reference</td><td style="padding:12px; font-family:monospace; font-size:16px;">{{ payment.reference_number|default:"None provided" }}</td></tr>
+        <tr><td style="padding:12px; font-weight:600; color:var(--text-muted);">Submitted On</td><td style="padding:12px;">{{ payment.created_at|date:"F d, Y H:i" }}</td></tr>
+        {% if payment.paid_at %}
+        <tr><td style="padding:12px; font-weight:600; color:var(--text-muted);">Verified On</td><td style="padding:12px; color:var(--success);">{{ payment.paid_at|date:"F d, Y H:i" }}</td></tr>
+        {% endif %}
+      </table>
+    </div>
+    
+    <div>
+      <h3 style="margin-top:0; border-bottom:1px solid var(--border); padding-bottom:12px; color:var(--accent);">Order Info</h3>
+      <table class="sp-table" style="margin-top:16px;">
+        <tr><td style="padding:12px; font-weight:600; color:var(--text-muted);">Order ID</td><td style="padding:12px;"><a href="{% url 'staff_panel:order_detail' payment.order.pk %}">#{{ payment.order.pk }}</a></td></tr>
+        <tr><td style="padding:12px; font-weight:600; color:var(--text-muted);">Customer</td><td style="padding:12px;">{{ payment.order.customer.username }}</td></tr>
+        <tr><td style="padding:12px; font-weight:600; color:var(--text-muted);">Order Total</td><td style="padding:12px;">₱{{ payment.order.total_amount|intcomma }}</td></tr>
+        <tr><td style="padding:12px; font-weight:600; color:var(--text-muted);">Order Status</td><td style="padding:12px;">{{ payment.order.get_status_display }}</td></tr>
+      </table>
+    </div>
+  </div>
+
+  {% if payment.status == 'PENDING' %}
+  <div style="background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius-lg); padding:32px; text-align:center;">
+    <h3 style="margin-top:0; margin-bottom:8px; color:var(--text-primary);">Action Required</h3>
+    <p style="color:var(--text-muted); margin-bottom:24px;">Please verify this payment with your bank/gateway records before approving.</p>
+    
+    <form method="post" style="display:flex; gap:16px; justify-content:center;">
+      {% csrf_token %}
+      <button type="submit" name="action" value="verify" class="sp-btn sp-btn-primary" style="background:var(--success); box-shadow:none; color:white !important;">✓ Verify Payment</button>
+      <button type="submit" name="action" value="reject" class="sp-btn sp-btn-primary" style="background:var(--danger); box-shadow:none; color:white !important;">✗ Reject Payment</button>
+    </form>
+  </div>
+  {% else %}
+  <div style="text-align:center;">
+    <a href="{% url 'staff_panel:payment_list' %}" class="sp-btn sp-btn-secondary">Back to Payments</a>
+  </div>
+  {% endif %}
+  
+</div>
+{% endblock %}

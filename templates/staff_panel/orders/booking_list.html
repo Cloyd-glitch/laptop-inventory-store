@@ -1,0 +1,44 @@
+{% extends "staff_panel/base.html" %}
+{% load humanize %}
+
+{% block page_title %}Bookings{% endblock %}
+
+{% block content %}
+<div class="sp-table-wrapper">
+  <div class="sp-table-header">
+    <div class="sp-table-title">All Bookings</div>
+  </div>
+  <table class="sp-table">
+    <thead>
+      <tr>
+        <th>Booking ID</th>
+        <th>Date</th>
+        <th>Customer</th>
+        <th>Laptop</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for booking in bookings %}
+      <tr>
+        <td style="font-weight:700;">#{{ booking.pk }}</td>
+        <td>{{ booking.created_at|date:"M d, Y" }}</td>
+        <td>{{ booking.customer.username }}</td>
+        <td>{{ booking.laptop.model_name }}</td>
+        <td>
+          <span class="sp-badge sp-badge-{% if booking.status == 'CONFIRMED' %}success{% elif booking.status == 'CANCELLED' %}danger{% elif booking.status == 'PENDING' %}warning{% else %}info{% endif %}">
+            {{ booking.get_status_display }}
+          </span>
+        </td>
+        <td>
+          <a href="{% url 'staff_panel:booking_detail' booking.pk %}" class="sp-btn sp-btn-secondary sp-btn-sm">View Details</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" style="text-align:center;">No bookings found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

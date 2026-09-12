@@ -1,0 +1,133 @@
+{% extends "staff_panel/base.html" %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="sp-form-card" style="margin: 0 auto;">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:32px;">
+      <!-- Left Column -->
+      <div>
+        <h3 style="margin-top:0; border-bottom:1px solid var(--border); padding-bottom:12px; color:var(--accent);">Basic Info</h3>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.brand.id_for_label }}">Brand</label>
+          {{ form.brand }}
+          {{ form.brand.errors }}
+        </div>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.model_name.id_for_label }}">Model Name</label>
+          {{ form.model_name }}
+          {{ form.model_name.errors }}
+        </div>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.slug.id_for_label }}">Slug</label>
+          {{ form.slug }}
+          {{ form.slug.errors }}
+        </div>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.category.id_for_label }}">Category</label>
+          {{ form.category }}
+          {{ form.category.errors }}
+        </div>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.condition.id_for_label }}">Condition</label>
+          {{ form.condition }}
+          {{ form.condition.errors }}
+        </div>
+
+        <h3 style="margin-top:32px; border-bottom:1px solid var(--border); padding-bottom:12px; color:var(--accent);">Pricing & Stock</h3>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.price.id_for_label }}">Price (₱)</label>
+          {{ form.price }}
+          {{ form.price.errors }}
+        </div>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.stock_quantity.id_for_label }}">Stock Quantity</label>
+          {{ form.stock_quantity }}
+          {{ form.stock_quantity.errors }}
+        </div>
+        
+        <div class="sp-form-group" style="display:flex;align-items:center;gap:12px;margin-top:24px;">
+          {{ form.is_active }}
+          <label class="sp-form-label" for="{{ form.is_active.id_for_label }}" style="margin:0;">Active (Visible to public)</label>
+          {{ form.is_active.errors }}
+        </div>
+      </div>
+      
+      <!-- Right Column -->
+      <div>
+        <h3 style="margin-top:0; border-bottom:1px solid var(--border); padding-bottom:12px; color:var(--accent);">Specifications</h3>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.processor.id_for_label }}">Processor</label>
+          {{ form.processor }}
+          {{ form.processor.errors }}
+        </div>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.ram.id_for_label }}">RAM</label>
+          {{ form.ram }}
+          {{ form.ram.errors }}
+        </div>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.storage.id_for_label }}">Storage</label>
+          {{ form.storage }}
+          {{ form.storage.errors }}
+        </div>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.gpu.id_for_label }}">GPU</label>
+          {{ form.gpu }}
+          {{ form.gpu.errors }}
+        </div>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.screen_size.id_for_label }}">Screen Size</label>
+          {{ form.screen_size }}
+          {{ form.screen_size.errors }}
+        </div>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.operating_system.id_for_label }}">Operating System</label>
+          {{ form.operating_system }}
+          {{ form.operating_system.errors }}
+        </div>
+
+        <h3 style="margin-top:32px; border-bottom:1px solid var(--border); padding-bottom:12px; color:var(--accent);">Media & Info</h3>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.main_image.id_for_label }}">Main Image</label>
+          {% if laptop and laptop.main_image %}
+            <div style="margin-bottom:12px;">
+              <img src="{{ laptop.main_image.url }}" style="height:100px;border-radius:8px;border:1px solid var(--border);">
+            </div>
+          {% endif %}
+          {{ form.main_image }}
+          {{ form.main_image.errors }}
+        </div>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.description.id_for_label }}">Description</label>
+          {{ form.description }}
+          {{ form.description.errors }}
+        </div>
+      </div>
+    </div>
+    
+    <div style="margin-top:40px; padding-top:24px; border-top:1px solid var(--border); display:flex; gap:16px;">
+      <button type="submit" class="sp-btn sp-btn-primary">Save Laptop</button>
+      <a href="{% url 'staff_panel:laptop_list' %}" class="sp-btn sp-btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

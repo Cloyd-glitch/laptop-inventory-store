@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Staff Portal{% endblock %} — LaptopStore</title>
+  <link rel="stylesheet" href="{% static 'css/staff_panel.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <div class="staff-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">💻</div>
+        <div>
+          <div class="sidebar-brand-text">Laptop<span>Store</span></div>
+          <div class="sidebar-brand-subtitle">Staff Portal</div>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <!-- Main -->
+        <div class="nav-group">
+          <div class="nav-group-title">Main Menu</div>
+          <a href="{% url 'staff_panel:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <span>📊</span> Dashboard
+          </a>
+        </div>
+        
+        <!-- Catalog -->
+        <div class="nav-group">
+          <div class="nav-group-title">Catalog</div>
+          <a href="{% url 'staff_panel:laptop_list' %}" class="nav-link {% if 'laptop' in request.resolver_match.url_name %}active{% endif %}">
+            <span>💻</span> Laptops
+          </a>
+        </div>
+        
+        <!-- Orders -->
+        <div class="nav-group">
+          <div class="nav-group-title">Orders</div>
+          <a href="{% url 'staff_panel:order_list' %}" class="nav-link {% if 'order' in request.resolver_match.url_name %}active{% endif %}">
+            <span>📦</span> Orders
+          </a>
+          <a href="{% url 'staff_panel:booking_list' %}" class="nav-link {% if 'booking' in request.resolver_match.url_name %}active{% endif %}">
+            <span>📋</span> Bookings
+          </a>
+        </div>
+        
+        <!-- Payments -->
+        <div class="nav-group">
+          <div class="nav-group-title">Payments</div>
+          <a href="{% url 'staff_panel:payment_list' %}" class="nav-link {% if 'payment' in request.resolver_match.url_name %}active{% endif %}">
+            <span>💳</span> Payments
+          </a>
+        </div>
+        
+        <!-- Accounts -->
+        <div class="nav-group">
+          <div class="nav-group-title">Accounts</div>
+          <a href="{% url 'staff_panel:user_list' %}" class="nav-link {% if 'user' in request.resolver_match.url_name %}active{% endif %}">
+            <span>👥</span> Users
+          </a>
+        </div>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+        <div>
+          <div style="font-weight:700;font-size:15px;color:var(--text-primary);">{{ request.user.full_name|default:request.user.username }}</div>
+          <div style="font-size:13px;color:var(--text-muted);">{{ request.user.get_role_display }}</div>
+        </div>
+        <a href="{% url 'accounts:logout' %}" style="margin-left:auto;color:var(--danger);font-size:20px;" title="Logout">🚪</a>
+      </div>
+    </aside>
+    
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-title">{% block page_title %}Dashboard{% endblock %}</div>
+        <div>
+          <a href="{% url 'catalog:list' %}" target="_blank" class="sp-btn sp-btn-secondary sp-btn-sm">View Live Site ↗</a>
+        </div>
+      </header>
+      
+      <div class="content-area">
+        <!-- Messages -->
+        {% if messages %}
+          {% for message in messages %}
+            <div class="sp-badge {% if message.tags %}sp-badge-{{ message.tags }}{% else %}sp-badge-info{% endif %}" style="margin-bottom:24px;font-size:15px;padding:12px 24px;display:block;">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+    
+  </div>
+</body>
+</html>

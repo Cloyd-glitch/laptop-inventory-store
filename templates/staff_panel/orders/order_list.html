@@ -1,0 +1,44 @@
+{% extends "staff_panel/base.html" %}
+{% load humanize %}
+
+{% block page_title %}Orders{% endblock %}
+
+{% block content %}
+<div class="sp-table-wrapper">
+  <div class="sp-table-header">
+    <div class="sp-table-title">All Orders</div>
+  </div>
+  <table class="sp-table">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Date</th>
+        <th>Customer</th>
+        <th>Total Amount</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td style="font-weight:700;">#{{ order.pk }}</td>
+        <td>{{ order.created_at|date:"M d, Y" }}</td>
+        <td>{{ order.customer.username }}</td>
+        <td style="font-family:'Outfit',sans-serif;font-weight:700;">₱{{ order.total_amount|intcomma }}</td>
+        <td>
+          <span class="sp-badge sp-badge-{% if order.status == 'COMPLETED' %}success{% elif order.status == 'CANCELLED' %}danger{% elif order.status == 'PENDING' %}warning{% else %}info{% endif %}">
+            {{ order.get_status_display }}
+          </span>
+        </td>
+        <td>
+          <a href="{% url 'staff_panel:order_detail' order.pk %}" class="sp-btn sp-btn-secondary sp-btn-sm">View Details</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" style="text-align:center;">No orders found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

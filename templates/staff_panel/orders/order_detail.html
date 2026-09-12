@@ -1,0 +1,97 @@
+{% extends "staff_panel/base.html" %}
+{% load humanize %}
+
+{% block page_title %}Order #{{ order.pk }}{% endblock %}
+
+{% block content %}
+<div style="display:grid; grid-template-columns: 2fr 1fr; gap:40px;">
+  
+  <!-- Left: Order Details -->
+  <div>
+    <div class="sp-form-card" style="margin-bottom:40px; padding:32px;">
+      <h3 style="margin-top:0; border-bottom:1px solid var(--border); padding-bottom:12px; color:var(--accent);">Items</h3>
+      <table class="sp-table" style="margin-bottom:0;">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in order.items.all %}
+          <tr>
+            <td>
+              <div style="font-weight:700;">{{ item.laptop.brand }} {{ item.laptop.model_name }}</div>
+              <div style="font-size:14px;color:var(--text-muted);">₱{{ item.unit_price|intcomma }} each</div>
+            </td>
+            <td>{{ item.quantity }}</td>
+            <td style="font-family:'Outfit',sans-serif;font-weight:700;">₱{{ item.subtotal|intcomma }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div style="display:flex; justify-content:space-between; padding:24px 32px 0; margin-top:24px; border-top:1px solid var(--border);">
+        <span style="font-size:18px; font-weight:700; color:var(--text-muted);">Total Amount</span>
+        <span style="font-size:24px; font-family:'Outfit',sans-serif; font-weight:800; color:var(--text-primary);">₱{{ order.total_amount|intcomma }}</span>
+      </div>
+    </div>
+    
+    <div class="sp-form-card" style="padding:32px;">
+      <h3 style="margin-top:0; border-bottom:1px solid var(--border); padding-bottom:12px; color:var(--accent);">Customer & Shipping</h3>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; margin-top:24px;">
+        <div>
+          <div style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Customer</div>
+          <div style="font-size:16px; font-weight:600;">{{ order.customer.full_name|default:order.customer.username }}</div>
+          <div style="font-size:14px; color:var(--text-secondary);">{{ order.customer.email }}</div>
+          <div style="font-size:14px; color:var(--text-secondary);">{{ order.customer.phone|default:"No phone" }}</div>
+        </div>
+        <div>
+          <div style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Shipping Address</div>
+          <div style="font-size:15px; color:var(--text-secondary); white-space:pre-line;">{{ order.shipping_address }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Right: Status Update -->
+  <div>
+    <div class="sp-form-card" style="padding:32px; position:sticky; top:120px;">
+      <h3 style="margin-top:0; border-bottom:1px solid var(--border); padding-bottom:12px; color:var(--accent);">Update Status</h3>
+      
+      <form method="post">
+        {% csrf_token %}
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.status.id_for_label }}">Status</label>
+          {{ form.status }}
+        </div>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.notes.id_for_label }}">Admin Notes</label>
+          {{ form.notes }}
+        </div>
+        
+        <button type="submit" class="sp-btn sp-btn-primary" style="width:100%;">Update Order</button>
+      </form>
+      
+      <div style="margin-top:40px; border-top:1px solid var(--border); padding-top:24px;">
+        <h4 style="margin-top:0; color:var(--text-muted); font-size:13px; text-transform:uppercase; letter-spacing:1px;">Payment Info</h4>
+        {% if order.payment %}
+          <div style="margin-top:12px;">
+            <span class="sp-badge sp-badge-{% if order.payment.status == 'VERIFIED' %}success{% elif order.payment.status == 'FAILED' %}danger{% else %}warning{% endif %}">
+              {{ order.payment.get_status_display }}
+            </span>
+          </div>
+          <div style="margin-top:8px; font-size:14px; color:var(--text-secondary);">Method: {{ order.payment.get_method_display }}</div>
+          <div style="margin-top:16px;">
+            <a href="{% url 'staff_panel:payment_verify' order.payment.pk %}" class="sp-btn sp-btn-secondary sp-btn-sm">View Payment</a>
+          </div>
+        {% else %}
+          <div style="margin-top:12px; font-size:14px; color:var(--text-secondary);">No payment recorded yet.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  
+</div>
+{% endblock %}

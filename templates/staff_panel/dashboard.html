@@ -1,0 +1,116 @@
+{% extends "staff_panel/base.html" %}
+{% load humanize %}
+
+{% block page_title %}Operations Dashboard{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+  <!-- Revenue -->
+  <div class="stat-card">
+    <div class="stat-title">Total Revenue</div>
+    <div class="stat-value"><span>₱</span>{{ total_revenue|floatformat:2|intcomma }}</div>
+    <div class="stat-desc">From completed orders</div>
+  </div>
+  
+  <!-- Orders -->
+  <div class="stat-card">
+    <div class="stat-title">Orders</div>
+    <div class="stat-value">{{ total_orders }}</div>
+    <div class="stat-desc">
+      {% if pending_orders > 0 %}
+        <strong style="color:var(--warning);">{{ pending_orders }} pending</strong>
+      {% else %}
+        All orders processed
+      {% endif %}
+    </div>
+  </div>
+  
+  <!-- Bookings -->
+  <div class="stat-card">
+    <div class="stat-title">Bookings</div>
+    <div class="stat-value">{{ total_bookings }}</div>
+    <div class="stat-desc">
+      {% if active_bookings > 0 %}
+        <strong style="color:var(--accent);">{{ active_bookings }} active</strong>
+      {% else %}
+        No active bookings
+      {% endif %}
+    </div>
+  </div>
+  
+  <!-- Payments -->
+  <div class="stat-card">
+    <div class="stat-title">Payments to Verify</div>
+    <div class="stat-value">{{ pending_payments }}</div>
+    <div class="stat-desc">
+      {% if pending_payments > 0 %}
+        <a href="{% url 'staff_panel:payment_list' %}">Review now →</a>
+      {% else %}
+        All caught up
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap:40px;">
+  <!-- Recent Orders -->
+  <div class="sp-table-wrapper">
+    <div class="sp-table-header">
+      <div class="sp-table-title">Recent Orders</div>
+      <a href="{% url 'staff_panel:order_list' %}" class="sp-btn sp-btn-secondary sp-btn-sm">View All</a>
+    </div>
+    <table class="sp-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Customer</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in recent_orders %}
+        <tr>
+          <td><a href="{% url 'staff_panel:order_detail' order.pk %}">#{{ order.pk }}</a></td>
+          <td>{{ order.customer.username }}</td>
+          <td style="font-family:'Outfit',sans-serif;font-weight:700;">₱{{ order.total_amount|intcomma }}</td>
+          <td><span class="sp-badge sp-badge-{% if order.status == 'COMPLETED' %}success{% elif order.status == 'CANCELLED' %}danger{% elif order.status == 'PENDING' %}warning{% else %}info{% endif %}">{{ order.get_status_display }}</span></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" style="text-align:center;">No orders yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Recent Bookings -->
+  <div class="sp-table-wrapper">
+    <div class="sp-table-header">
+      <div class="sp-table-title">Recent Bookings</div>
+      <a href="{% url 'staff_panel:booking_list' %}" class="sp-btn sp-btn-secondary sp-btn-sm">View All</a>
+    </div>
+    <table class="sp-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Laptop</th>
+          <th>Customer</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for booking in recent_bookings %}
+        <tr>
+          <td><a href="{% url 'staff_panel:booking_detail' booking.pk %}">#{{ booking.pk }}</a></td>
+          <td>{{ booking.laptop.model_name }}</td>
+          <td>{{ booking.customer.username }}</td>
+          <td><span class="sp-badge sp-badge-{% if booking.status == 'CONFIRMED' %}success{% elif booking.status == 'CANCELLED' %}danger{% elif booking.status == 'PENDING' %}warning{% else %}info{% endif %}">{{ booking.get_status_display }}</span></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" style="text-align:center;">No bookings yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

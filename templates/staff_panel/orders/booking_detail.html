@@ -1,0 +1,68 @@
+{% extends "staff_panel/base.html" %}
+{% load humanize %}
+
+{% block page_title %}Booking #{{ booking.pk }}{% endblock %}
+
+{% block content %}
+<div style="display:grid; grid-template-columns: 2fr 1fr; gap:40px;">
+  
+  <!-- Left: Booking Details -->
+  <div>
+    <div class="sp-form-card" style="margin-bottom:40px; padding:32px;">
+      <h3 style="margin-top:0; border-bottom:1px solid var(--border); padding-bottom:12px; color:var(--accent);">Laptop Details</h3>
+      <div style="display:flex; gap:24px; margin-top:24px;">
+        {% if booking.laptop.main_image %}
+          <img src="{{ booking.laptop.main_image.url }}" style="height:120px; width:160px; object-fit:cover; border-radius:12px; border:1px solid var(--border);">
+        {% endif %}
+        <div>
+          <div style="font-size:24px; font-weight:700;">{{ booking.laptop.brand }} {{ booking.laptop.model_name }}</div>
+          <div style="font-size:16px; color:var(--text-muted); margin-top:4px;">Quantity: {{ booking.quantity }}</div>
+          <div style="font-size:20px; font-family:'Outfit',sans-serif; font-weight:700; color:var(--text-primary); margin-top:12px;">₱{{ booking.laptop.price|intcomma }}</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="sp-form-card" style="padding:32px;">
+      <h3 style="margin-top:0; border-bottom:1px solid var(--border); padding-bottom:12px; color:var(--accent);">Customer Details</h3>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; margin-top:24px;">
+        <div>
+          <div style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Customer Name</div>
+          <div style="font-size:16px; font-weight:600;">{{ booking.customer.full_name|default:booking.customer.username }}</div>
+        </div>
+        <div>
+          <div style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Contact</div>
+          <div style="font-size:15px; color:var(--text-secondary);">{{ booking.customer.email }}<br>{{ booking.customer.phone|default:"No phone" }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Right: Status Update -->
+  <div>
+    <div class="sp-form-card" style="padding:32px; position:sticky; top:120px;">
+      <h3 style="margin-top:0; border-bottom:1px solid var(--border); padding-bottom:12px; color:var(--accent);">Update Status</h3>
+      
+      <div style="margin-bottom:24px;">
+        <div style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Expires At</div>
+        <div style="font-size:16px; font-weight:600; color:var(--warning);">{{ booking.expires_at|date:"F d, Y H:i" }}</div>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.status.id_for_label }}">Status</label>
+          {{ form.status }}
+        </div>
+        
+        <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.notes.id_for_label }}">Admin Notes</label>
+          {{ form.notes }}
+        </div>
+        
+        <button type="submit" class="sp-btn sp-btn-primary" style="width:100%;">Update Booking</button>
+      </form>
+    </div>
+  </div>
+  
+</div>
+{% endblock %}
