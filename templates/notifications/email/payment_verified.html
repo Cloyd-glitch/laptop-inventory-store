@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; background:#1e1e1f; color:#f0ece4; margin:0; padding:0; }
+  .wrapper { max-width:600px; margin:0 auto; background:#2a2a2c; border:1px solid #3d3a35; border-radius:12px; overflow:hidden; }
+  .header { background:linear-gradient(135deg,#2a2a2c,#313135); padding:32px 40px; text-align:center; border-bottom:2px solid #5a9e6f; }
+  .header h1 { margin:0; font-size:22px; color:#c98a4b; letter-spacing:1px; }
+  .header p { color:#5a9e6f; font-weight:600; }
+  .body { padding:32px 40px; }
+  .body h2 { color:#f0ece4; margin-top:0; }
+  .body p { color:#d4cfc8; line-height:1.7; }
+  .success-box { background:#1e2e22; border:1px solid #5a9e6f; border-radius:8px; padding:20px; text-align:center; margin:20px 0; }
+  .success-box .amount { font-size:32px; font-weight:700; color:#5a9e6f; }
+  .success-box p { color:#9a9289; font-size:13px; margin:4px 0 0; }
+  .footer { padding:20px 40px; background:#1e1e1f; text-align:center; color:#9a9289; font-size:12px; border-top:1px solid #3d3a35; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <h1>🖥 LaptopStore</h1>
+    <p>✅ Payment Verified</p>
+  </div>
+  <div class="body">
+    <h2>Hi {{ payment.order.customer.username }},</h2>
+    <p>Your payment has been verified and your order is now being processed.</p>
+
+    <div class="success-box">
+      <div class="amount">₱{{ payment.amount|floatformat:2 }}</div>
+      <p>Order #{{ payment.order_id }} · {{ payment.get_method_display }}</p>
+      {% if payment.reference_number %}
+      <p>Ref: {{ payment.reference_number }}</p>
+      {% endif %}
+    </div>
+
+    <p>We'll notify you again once your order ships. Thank you for shopping with us!</p>
+  </div>
+  <div class="footer">
+    &copy; LaptopStore. Need help? Reply to this email.
+  </div>
+</div>
+</body>
+</html>

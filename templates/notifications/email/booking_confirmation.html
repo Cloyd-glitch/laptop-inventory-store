@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; background:#1e1e1f; color:#f0ece4; margin:0; padding:0; }
+  .wrapper { max-width:600px; margin:0 auto; background:#2a2a2c; border:1px solid #3d3a35; border-radius:12px; overflow:hidden; }
+  .header { background:linear-gradient(135deg,#2a2a2c,#313135); padding:32px 40px; text-align:center; border-bottom:2px solid #c98a4b; }
+  .header h1 { margin:0; font-size:22px; color:#c98a4b; letter-spacing:1px; }
+  .body { padding:32px 40px; }
+  .body h2 { color:#f0ece4; margin-top:0; }
+  .body p { color:#d4cfc8; line-height:1.7; }
+  .info-box { background:#313135; border:1px solid #3d3a35; border-left:4px solid #c98a4b; border-radius:8px; padding:16px 20px; margin:20px 0; }
+  .info-box p { margin:4px 0; font-size:14px; }
+  .info-box .label { color:#9a9289; font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
+  .info-box .value { color:#f0ece4; font-weight:600; margin-bottom:10px; }
+  .expiry { color:#c98a4b; font-weight:700; font-size:16px; }
+  .footer { padding:20px 40px; background:#1e1e1f; text-align:center; color:#9a9289; font-size:12px; border-top:1px solid #3d3a35; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <h1>🖥 LaptopStore</h1>
+    <p>Booking Confirmed</p>
+  </div>
+  <div class="body">
+    <h2>Hi {{ booking.customer.username }},</h2>
+    <p>Great news! Your unit has been reserved. Here are your booking details:</p>
+
+    <div class="info-box">
+      <p class="label">Booking Reference</p>
+      <p class="value">#{{ booking.pk }}</p>
+
+      <p class="label">Laptop</p>
+      <p class="value">{{ booking.laptop.brand }} {{ booking.laptop.model_name }}</p>
+
+      <p class="label">Reserved Until</p>
+      <p class="value expiry">{{ booking.expires_at|date:"F d, Y" }}</p>
+    </div>
+
+    <p>Please complete your purchase before the expiry date. After that, the unit will be released back to stock.</p>
+    <p>Log in to your account to proceed with payment.</p>
+  </div>
+  <div class="footer">
+    &copy; {{ booking.created_at.year }} LaptopStore.
+  </div>
+</div>
+</body>
+</html>
