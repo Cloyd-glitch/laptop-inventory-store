@@ -14,7 +14,11 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <div class="sidebar-brand-icon">💻</div>
+        <div class="sidebar-brand-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line>
+          </svg>
+        </div>
         <div>
           <div class="sidebar-brand-text">Laptop<span>Store</span></div>
           <div class="sidebar-brand-subtitle">Staff Portal</div>
@@ -26,7 +30,7 @@
         <div class="nav-group">
           <div class="nav-group-title">Main Menu</div>
           <a href="{% url 'staff_panel:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-            <span>📊</span> Dashboard
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg> Dashboard
           </a>
         </div>
         
@@ -34,7 +38,7 @@
         <div class="nav-group">
           <div class="nav-group-title">Catalog</div>
           <a href="{% url 'staff_panel:laptop_list' %}" class="nav-link {% if 'laptop' in request.resolver_match.url_name %}active{% endif %}">
-            <span>💻</span> Laptops
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line></svg> Laptops
           </a>
         </div>
         
@@ -42,10 +46,10 @@
         <div class="nav-group">
           <div class="nav-group-title">Orders</div>
           <a href="{% url 'staff_panel:order_list' %}" class="nav-link {% if 'order' in request.resolver_match.url_name %}active{% endif %}">
-            <span>📦</span> Orders
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> Orders
           </a>
           <a href="{% url 'staff_panel:booking_list' %}" class="nav-link {% if 'booking' in request.resolver_match.url_name %}active{% endif %}">
-            <span>📋</span> Bookings
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Bookings
           </a>
         </div>
         
@@ -53,7 +57,7 @@
         <div class="nav-group">
           <div class="nav-group-title">Payments</div>
           <a href="{% url 'staff_panel:payment_list' %}" class="nav-link {% if 'payment' in request.resolver_match.url_name %}active{% endif %}">
-            <span>💳</span> Payments
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg> Payments
           </a>
         </div>
         
@@ -61,7 +65,7 @@
         <div class="nav-group">
           <div class="nav-group-title">Accounts</div>
           <a href="{% url 'staff_panel:user_list' %}" class="nav-link {% if 'user' in request.resolver_match.url_name %}active{% endif %}">
-            <span>👥</span> Users
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Users
           </a>
         </div>
       </nav>
@@ -72,7 +76,9 @@
           <div style="font-weight:700;font-size:15px;color:var(--text-primary);">{{ request.user.full_name|default:request.user.username }}</div>
           <div style="font-size:13px;color:var(--text-muted);">{{ request.user.get_role_display }}</div>
         </div>
-        <a href="{% url 'accounts:logout' %}" style="margin-left:auto;color:var(--danger);font-size:20px;" title="Logout">🚪</a>
+        <a href="{% url 'accounts:logout' %}" style="margin-left:auto;color:var(--danger);" title="Logout">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </a>
       </div>
     </aside>
     

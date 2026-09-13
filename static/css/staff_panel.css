@@ -40,6 +40,29 @@
      -webkit-font-smoothing: antialiased;
      display: flex;
      min-height: 100vh;
+     
+     /* Firefox Scrollbar */
+     scrollbar-width: thin;
+     scrollbar-color: var(--bg-hover) var(--bg-deep);
+   }
+
+   /* ─── Webkit Scrollbar ───────────────────────────────────── */
+   ::-webkit-scrollbar {
+     width: 12px;
+     height: 12px;
+   }
+   ::-webkit-scrollbar-track {
+     background: var(--bg-deep);
+     border-left: 1px solid var(--border);
+     box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+   }
+   ::-webkit-scrollbar-thumb {
+     background: var(--bg-hover);
+     border: 2px solid var(--bg-deep);
+     border-radius: 8px;
+   }
+   ::-webkit-scrollbar-thumb:hover {
+     background: var(--text-muted);
    }
    
    a { color: var(--accent); text-decoration: none; transition: all .2s; }
