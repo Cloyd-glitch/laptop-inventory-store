@@ -71,7 +71,11 @@
       </nav>
       
       <div class="sidebar-footer">
-        <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+        {% if request.user.avatar %}
+          <img src="{{ request.user.avatar.url }}" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:1px solid var(--border);">
+        {% else %}
+          <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+        {% endif %}
         <div>
           <div style="font-weight:700;font-size:15px;color:var(--text-primary);">{{ request.user.full_name|default:request.user.username }}</div>
           <div style="font-size:13px;color:var(--text-muted);">{{ request.user.get_role_display }}</div>
