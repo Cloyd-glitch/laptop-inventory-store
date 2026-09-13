@@ -15,6 +15,7 @@
         <th>Email</th>
         <th>Role</th>
         <th>Joined</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -34,9 +35,12 @@
           </span>
         </td>
         <td>{{ u.date_joined|date:"M d, Y" }}</td>
+        <td>
+          <a href="{% url 'staff_panel:user_detail' u.pk %}" class="sp-btn sp-btn-secondary sp-btn-sm">View Details</a>
+        </td>
       </tr>
       {% empty %}
-      <tr><td colspan="5" style="text-align:center;">No users found.</td></tr>
+      <tr><td colspan="6" style="text-align:center;">No users found.</td></tr>
       {% endfor %}
     </tbody>
   </table>

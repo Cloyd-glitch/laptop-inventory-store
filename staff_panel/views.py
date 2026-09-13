@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.db.models import Count, Sum
 from django.utils import timezone
 from .decorators import staff_required
-from .forms import LaptopAdminForm, CategoryAdminForm, OrderStatusForm, BookingStatusForm
+from .forms import LaptopAdminForm, CategoryAdminForm, OrderStatusForm, BookingStatusForm, UserAdminForm
 from catalog.models import Laptop, Category
 from orders.models import Order, Booking
 from payments.models import Payment
@@ -130,3 +130,31 @@ def payment_verify(request, pk):
 def user_list(request):
     users = User.objects.all().order_by('-date_joined')
     return render(request, 'staff_panel/accounts/user_list.html', {'users': users})
+
+@staff_required
+def user_detail(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    return render(request, 'staff_panel/accounts/user_detail.html', {'user_obj': user})
+
+@staff_required
+def user_update(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == 'POST':
+        form = UserAdminForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"User '{user.username}' updated successfully.")
+            return redirect('staff_panel:user_list')
+    else:
+        form = UserAdminForm(instance=user)
+    return render(request, 'staff_panel/accounts/user_form.html', {'form': form, 'title': f'Edit User: {user.username}', 'user_obj': user})
+
+@staff_required
+def user_delete(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == 'POST':
+        user.delete()
+        messages.success(request, "User deleted successfully.")
+        return redirect('staff_panel:user_list')
+    return render(request, 'staff_panel/confirm_delete.html', {'object_name': f"User: {user.username}", 'cancel_url': 'staff_panel:user_list'})
+

@@ -2,6 +2,7 @@ from django import forms
 from catalog.models import Laptop, Category, LaptopImage
 from orders.models import Order, Booking
 from payments.models import Payment
+from accounts.models import User
 
 
 class LaptopAdminForm(forms.ModelForm):
@@ -68,3 +69,28 @@ class BookingStatusForm(forms.ModelForm):
             'status': forms.Select(attrs={'class': 'sp-input'}),
             'notes':  forms.Textarea(attrs={'class': 'sp-input', 'rows': 3}),
         }
+
+class UserAdminForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = [
+            'avatar', 'first_name', 'last_name', 'username', 'email',
+            'sex', 'bday', 'country', 'educational_background', 'role', 'is_active'
+        ]
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'sp-input'}),
+            'last_name': forms.TextInput(attrs={'class': 'sp-input'}),
+            'username': forms.TextInput(attrs={'class': 'sp-input'}),
+            'email': forms.EmailInput(attrs={'class': 'sp-input'}),
+            'sex': forms.TextInput(attrs={'class': 'sp-input', 'placeholder': 'e.g. Male, Female, Other'}),
+            'bday': forms.DateInput(attrs={'class': 'sp-input', 'type': 'date'}),
+            'country': forms.TextInput(attrs={'class': 'sp-input'}),
+            'educational_background': forms.Textarea(attrs={'class': 'sp-input', 'rows': 3}),
+            'role': forms.Select(attrs={'class': 'sp-input'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'sp-checkbox'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['avatar'].widget.attrs.update({'class': 'sp-file-input'})
+

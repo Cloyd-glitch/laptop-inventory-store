@@ -26,4 +26,7 @@ urlpatterns = [
     
     # Accounts
     path('accounts/users/', views.user_list, name='user_list'),
+    path('accounts/users/<int:pk>/', views.user_detail, name='user_detail'),
+    path('accounts/users/<int:pk>/edit/', views.user_update, name='user_update'),
+    path('accounts/users/<int:pk>/delete/', views.user_delete, name='user_delete'),
 ]

@@ -12,6 +12,12 @@ class User(AbstractUser):
     address = models.TextField(blank=True, help_text="Full shipping address")
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
 
+    # New fields requested by user
+    sex = models.CharField(max_length=20, blank=True)
+    bday = models.DateField(blank=True, null=True, verbose_name="Birthday")
+    country = models.CharField(max_length=100, blank=True)
+    educational_background = models.TextField(blank=True)
+
     @property
     def is_admin_role(self):
         return self.role == self.Role.ADMIN
