@@ -5,6 +5,9 @@ from payments.models import Payment
 from accounts.models import User
 
 
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
 class LaptopAdminForm(forms.ModelForm):
     class Meta:
         model = Laptop
@@ -35,6 +38,11 @@ class LaptopAdminForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['slug'].required = False
         self.fields['main_image'].widget = forms.FileInput(attrs={'class': 'sp-file-input'})
+        self.fields['gallery_images'] = forms.FileField(
+            widget=MultipleFileInput(attrs={'multiple': True, 'class': 'sp-file-input'}),
+            required=False,
+            help_text="Select multiple images to add to the gallery."
+        )
 
 
 class CategoryAdminForm(forms.ModelForm):
