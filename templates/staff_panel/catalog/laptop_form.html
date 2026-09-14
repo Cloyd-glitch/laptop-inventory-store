@@ -117,6 +117,27 @@
         </div>
         
         <div class="sp-form-group">
+          <label class="sp-form-label" for="{{ form.gallery_images.id_for_label }}">Gallery Images</label>
+          {{ form.gallery_images }}
+          {{ form.gallery_images.errors }}
+          
+          {% if laptop and laptop.gallery_images.all %}
+            <div style="margin-top:16px; display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
+              {% for img in laptop.gallery_images.all %}
+                <div style="position:relative; border:1px solid var(--border); border-radius:8px; overflow:hidden;">
+                  <img src="{{ img.image.url }}" style="width:100%; height:80px; object-fit:cover; display:block;">
+                  <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.7); padding:4px; text-align:center;">
+                    <label style="color:#fff; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;">
+                      <input type="checkbox" name="delete_images" value="{{ img.id }}" style="margin:0;"> Delete
+                    </label>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        
+        <div class="sp-form-group">
           <label class="sp-form-label" for="{{ form.description.id_for_label }}">Description</label>
           {{ form.description }}
           {{ form.description.errors }}

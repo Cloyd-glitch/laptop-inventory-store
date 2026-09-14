@@ -74,6 +74,8 @@ def dashboard(request):
     }
     return render(request, 'staff_panel/dashboard.html', context)
 
+from catalog.models import Laptop, Category, LaptopImage
+
 # --- CATALOG VIEWS ---
 @staff_required
 def laptop_list(request):
@@ -86,6 +88,8 @@ def laptop_create(request):
         form = LaptopAdminForm(request.POST, request.FILES)
         if form.is_valid():
             laptop = form.save()
+            for img in request.FILES.getlist('gallery_images'):
+                LaptopImage.objects.create(laptop=laptop, image=img)
             messages.success(request, f"Laptop '{laptop.model_name}' created successfully.")
             return redirect('staff_panel:laptop_list')
     else:
@@ -98,7 +102,17 @@ def laptop_update(request, pk):
     if request.method == 'POST':
         form = LaptopAdminForm(request.POST, request.FILES, instance=laptop)
         if form.is_valid():
+            # Handle deletions
+            delete_image_ids = request.POST.getlist('delete_images')
+            if delete_image_ids:
+                LaptopImage.objects.filter(id__in=delete_image_ids, laptop=laptop).delete()
+            
             form.save()
+            
+            # Handle new gallery images
+            for img in request.FILES.getlist('gallery_images'):
+                LaptopImage.objects.create(laptop=laptop, image=img)
+                
             messages.success(request, f"Laptop '{laptop.model_name}' updated successfully.")
             return redirect('staff_panel:laptop_list')
     else:
