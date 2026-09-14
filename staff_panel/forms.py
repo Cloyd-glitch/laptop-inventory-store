@@ -34,7 +34,7 @@ class LaptopAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['slug'].required = False
-        self.fields['main_image'].widget.attrs.update({'class': 'sp-file-input'})
+        self.fields['main_image'].widget = forms.FileInput(attrs={'class': 'sp-file-input'})
 
 
 class CategoryAdminForm(forms.ModelForm):
@@ -92,5 +92,5 @@ class UserAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['avatar'].widget.attrs.update({'class': 'sp-file-input'})
+        self.fields['avatar'].widget = forms.FileInput(attrs={'class': 'sp-file-input'})
 
