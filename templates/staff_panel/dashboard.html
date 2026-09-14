@@ -1,9 +1,43 @@
 {% extends "staff_panel/base.html" %}
 {% load humanize %}
 
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
 {% block page_title %}Operations Dashboard{% endblock %}
 
 {% block content %}
+<div style="display:flex; justify-content: flex-end; margin-bottom: 24px;">
+  <form method="GET" style="display:flex; align-items:center; gap:12px;">
+    <label style="color:var(--text-muted); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:1px;">Time Range:</label>
+    <select name="days" onchange="this.form.submit()" class="sp-input" style="padding:10px 16px; font-size:16px; width:auto; height:auto; cursor:pointer;">
+      <option value="1" {% if current_days == 1 %}selected{% endif %}>Today (24h)</option>
+      <option value="3" {% if current_days == 3 %}selected{% endif %}>Last 3 Days</option>
+      <option value="7" {% if current_days == 7 %}selected{% endif %}>Last 7 Days</option>
+      <option value="30" {% if current_days == 30 %}selected{% endif %}>Last 30 Days</option>
+      <option value="90" {% if current_days == 90 %}selected{% endif %}>Last 90 Days</option>
+      <option value="0" {% if current_days == 0 %}selected{% endif %}>All Time</option>
+    </select>
+  </form>
+</div>
+
+<!-- Charts Grid -->
+<div style="display:grid; grid-template-columns: 2fr 1fr; gap:32px; margin-bottom: 40px;">
+  <div class="stat-card" style="padding: 24px;">
+    <div class="stat-title">Revenue over Time</div>
+    <div style="position: relative; height:300px; width:100%;">
+      <canvas id="revenueLineChart"></canvas>
+    </div>
+  </div>
+  <div class="stat-card" style="padding: 24px;">
+    <div class="stat-title">Order Statuses</div>
+    <div style="position: relative; height:300px; width:100%;">
+      <canvas id="statusPieChart"></canvas>
+    </div>
+  </div>
+</div>
+
 <div class="stats-grid">
   <!-- Revenue -->
   <div class="stat-card">
@@ -113,4 +147,133 @@
     </table>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Shared Theme Variables
+    const gridColor = 'rgba(255,255,255,0.05)';
+    const textColor = '#8a8278';
+    
+    // Line Chart
+    const lineCtx = document.getElementById('revenueLineChart').getContext('2d');
+    const lineLabels = JSON.parse('{{ line_labels_json|safe }}');
+    const lineData = JSON.parse('{{ line_data_json|safe }}');
+    
+    new Chart(lineCtx, {
+      type: 'line',
+      data: {
+        labels: lineLabels,
+        datasets: [{
+          label: 'Revenue (₱)',
+          data: lineData,
+          borderColor: '#c98a4b',
+          backgroundColor: 'rgba(201,138,75,0.1)',
+          borderWidth: 2,
+          pointBackgroundColor: '#e0a060',
+          pointBorderColor: '#141415',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#141415',
+            titleColor: '#f0ece4',
+            bodyColor: '#d0cbc3',
+            borderColor: '#3a3730',
+            borderWidth: 1,
+            padding: 12,
+            displayColors: false,
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || '';
+                if (label) { label += ': '; }
+                if (context.parsed.y !== null) {
+                  label += '₱' + context.parsed.y.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                }
+                return label;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: gridColor, drawBorder: false },
+            ticks: { color: textColor, font: { family: 'Inter', size: 12 } }
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: gridColor, drawBorder: false },
+            ticks: {
+              color: textColor,
+              font: { family: 'Inter', size: 12 },
+              callback: function(value, index, values) {
+                if (value >= 1000) {
+                  return '₱' + (value/1000) + 'k';
+                }
+                return '₱' + value;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // Pie Chart
+    const pieCtx = document.getElementById('statusPieChart').getContext('2d');
+    const pieLabels = JSON.parse('{{ pie_labels_json|safe }}');
+    const pieData = JSON.parse('{{ pie_data_json|safe }}');
+    
+    new Chart(pieCtx, {
+      type: 'doughnut',
+      data: {
+        labels: pieLabels,
+        datasets: [{
+          data: pieData,
+          backgroundColor: [
+            '#c98a4b', // warning/pending/accent
+            '#5a9e6f', // success/completed
+            '#b85450', // danger/cancelled
+            '#4b8ec9', // info
+            '#8a8278'  // muted
+          ],
+          borderColor: '#242426', // match card background
+          borderWidth: 3,
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '70%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#d0cbc3',
+              font: { family: 'Inter', size: 12 },
+              usePointStyle: true,
+              padding: 20
+            }
+          },
+          tooltip: {
+            backgroundColor: '#141415',
+            titleColor: '#f0ece4',
+            bodyColor: '#d0cbc3',
+            borderColor: '#3a3730',
+            borderWidth: 1,
+            padding: 12
+          }
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}

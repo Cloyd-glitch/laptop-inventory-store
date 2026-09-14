@@ -9,18 +9,68 @@ from orders.models import Order, Booking
 from payments.models import Payment
 from accounts.models import User
 
+from datetime import timedelta
+import json
+from django.db.models.functions import TruncDate
+from django.core.serializers.json import DjangoJSONEncoder
+
 @staff_required
 def dashboard(request):
-    """Main staff dashboard with key metrics."""
+    """Main staff dashboard with key metrics and charts."""
+    
+    # Handle time filtering
+    days_filter = request.GET.get('days', '30')
+    try:
+        days_filter = int(days_filter)
+    except ValueError:
+        days_filter = 30
+        
+    orders_qs = Order.objects.all()
+    bookings_qs = Booking.objects.all()
+    payments_qs = Payment.objects.all()
+    
+    # Apply filter if not "all time" (represented by e.g. 0)
+    if days_filter > 0:
+        start_date = timezone.now() - timedelta(days=days_filter)
+        orders_qs = orders_qs.filter(created_at__gte=start_date)
+        bookings_qs = bookings_qs.filter(created_at__gte=start_date)
+        payments_qs = payments_qs.filter(created_at__gte=start_date)
+    
+    total_revenue = orders_qs.filter(status='COMPLETED').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+
+    # Line Chart Data (Daily Revenue for Completed Orders)
+    daily_revenue_qs = orders_qs.filter(status='COMPLETED') \
+        .annotate(date=TruncDate('created_at')) \
+        .values('date') \
+        .annotate(revenue=Sum('total_amount')) \
+        .order_by('date')
+    
+    line_labels = [entry['date'].strftime('%b %d') for entry in daily_revenue_qs]
+    line_data = [float(entry['revenue']) for entry in daily_revenue_qs]
+    
+    # Pie Chart Data (Order Status Distribution)
+    status_counts_qs = orders_qs.values('status').annotate(count=Count('id'))
+    pie_labels = [dict(Order.Status.choices).get(entry['status'], entry['status']) for entry in status_counts_qs]
+    pie_data = [entry['count'] for entry in status_counts_qs]
+
     context = {
-        'total_orders': Order.objects.count(),
-        'pending_orders': Order.objects.filter(status='PENDING').count(),
-        'total_bookings': Booking.objects.count(),
-        'active_bookings': Booking.objects.filter(status__in=['PENDING', 'CONFIRMED']).count(),
-        'total_revenue': Order.objects.filter(status='COMPLETED').aggregate(Sum('total_amount'))['total_amount__sum'] or 0,
-        'recent_orders': Order.objects.order_by('-created_at')[:5],
-        'recent_bookings': Booking.objects.order_by('-created_at')[:5],
-        'pending_payments': Payment.objects.filter(status='PENDING').count(),
+        'total_orders': orders_qs.count(),
+        'pending_orders': orders_qs.filter(status='PENDING').count(),
+        'total_bookings': bookings_qs.count(),
+        'active_bookings': bookings_qs.filter(status__in=['PENDING', 'CONFIRMED']).count(),
+        'total_revenue': total_revenue,
+        'recent_orders': orders_qs.order_by('-created_at')[:5],
+        'recent_bookings': bookings_qs.order_by('-created_at')[:5],
+        'pending_payments': payments_qs.filter(status='PENDING').count(),
+        
+        # Filter State
+        'current_days': days_filter,
+        
+        # Chart Data
+        'line_labels_json': json.dumps(line_labels),
+        'line_data_json': json.dumps(line_data),
+        'pie_labels_json': json.dumps(pie_labels),
+        'pie_data_json': json.dumps(pie_data),
     }
     return render(request, 'staff_panel/dashboard.html', context)
 
