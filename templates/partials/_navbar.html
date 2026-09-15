@@ -12,6 +12,9 @@
     <!-- Nav links -->
     <ul class="navbar-nav" role="list">
       <li><a href="{% url 'catalog:list' %}" id="nav-catalog">Browse</a></li>
+      <li><a href="{% url 'catalog:list' %}#catalog" id="nav-categories">Categories</a></li>
+      <li><a href="{% url 'catalog:list' %}?condition=refurbished#catalog" id="nav-deals">Deals</a></li>
+      <li><a href="#" id="nav-compare">Compare</a></li>
       {% if user.is_authenticated %}
         <li><a href="{% url 'accounts:my_orders' %}" id="nav-orders">My Orders</a></li>
         <li><a href="{% url 'accounts:my_bookings' %}" id="nav-bookings">Bookings</a></li>
@@ -43,7 +46,7 @@
         </form>
       {% else %}
         <a href="{% url 'accounts:login' %}" class="btn btn-secondary btn-sm" id="nav-login">Sign in</a>
-        <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-sm" id="nav-signup">Register</a>
+        <a href="{% url 'accounts:signup' %}" class="btn btn-secondary btn-sm" id="nav-signup">Register</a>
       {% endif %}
     </div>
 
