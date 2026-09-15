@@ -20,30 +20,19 @@
   </nav>
 
   <div class="detail-layout">
-    <!-- Left: Images -->
+    <!-- Left: Images Collage -->
     <div>
-      <img id="main-gallery-img"
-           src="{{ laptop.main_image.url }}"
-           alt="{{ laptop.brand }} {{ laptop.model_name }}"
-           class="detail-main-image">
-
-      {% if gallery %}
-      <div class="gallery-strip" role="list" aria-label="Additional images">
-        <!-- Main image as first thumb -->
-        <img src="{{ laptop.main_image.url }}"
-             class="gallery-thumb active"
-             data-full="{{ laptop.main_image.url }}"
-             alt="Main view"
-             role="listitem">
-        {% for img in gallery %}
-        <img src="{{ img.image.url }}"
-             class="gallery-thumb"
-             data-full="{{ img.image.url }}"
-             alt="{{ img.caption|default:'Gallery image' }}"
-             role="listitem">
+      <div class="fb-collage {% if all_images_count >= 4 %}fb-collage-4{% else %}fb-collage-{{ all_images_count }}{% endif %}">
+        {% for img in all_images|slice:":4" %}
+          <div class="collage-item" data-index="{{ forloop.counter0 }}" style="background-image: url('{{ img.url }}');">
+            {% if forloop.last and all_images_count > 4 %}
+              <div class="collage-overlay">
+                <span>+{{ all_images_count|add:"-4" }}</span>
+              </div>
+            {% endif %}
+          </div>
         {% endfor %}
       </div>
-      {% endif %}
     </div>
 
     <!-- Right: Details -->
@@ -149,4 +138,23 @@
   </div>
   {% endif %}
 </div>
+
+<!-- Lightbox Modal -->
+<div id="lightbox-modal" class="lightbox">
+  <span class="lightbox-close">&times;</span>
+  <span class="lightbox-prev">&#10094;</span>
+  <span class="lightbox-next">&#10095;</span>
+  <div class="lightbox-content-wrapper">
+    <img id="lightbox-img" class="lightbox-content" src="">
+    <div id="lightbox-caption" class="lightbox-caption"></div>
+  </div>
+</div>
+
+<script>
+  window.galleryImages = [
+    {% for img in all_images %}
+      { url: "{{ img.url|escapejs }}", caption: "{{ img.caption|escapejs }}" }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ];
+</script>
 {% endblock %}

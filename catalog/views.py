@@ -74,7 +74,13 @@ def catalog_list_view(request):
 
 def laptop_detail_view(request, slug):
     laptop = get_object_or_404(Laptop, slug=slug, is_active=True)
-    gallery = laptop.gallery_images.all()
+    gallery = list(laptop.gallery_images.all())
+    
+    # Combine main image and gallery images for the collage
+    all_images = [{'url': laptop.main_image.url, 'caption': 'Main View'}]
+    for img in gallery:
+        all_images.append({'url': img.image.url, 'caption': img.caption})
+        
     related = Laptop.objects.filter(
         category=laptop.category, is_active=True
     ).exclude(pk=laptop.pk)[:4]
@@ -82,6 +88,8 @@ def laptop_detail_view(request, slug):
     context = {
         'laptop': laptop,
         'gallery': gallery,
+        'all_images': all_images,
+        'all_images_count': len(all_images),
         'related': related,
     }
     return render(request, 'catalog/detail.html', context)
