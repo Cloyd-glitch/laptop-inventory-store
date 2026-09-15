@@ -14,7 +14,7 @@ def signup_view(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            login(request, user, backend='accounts.backends.EmailOrUsernameModelBackend')
             messages.success(request, f"Welcome, {user.username}! Your account has been created.")
             return redirect('catalog:list')
     else:
