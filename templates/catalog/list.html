@@ -34,7 +34,6 @@
   </div>
 </section>
 
-<div class="container page-content" style="padding-top:0;">
   <div class="catalog-layout">
 
     <!-- Filter Sidebar -->
@@ -99,22 +98,22 @@
             <span class="price-range-sep">—</span>
             <input type="number" name="max_price" class="form-input" placeholder="Max" value="{{ max_price }}" min="0" id="max-price">
           </div>
-          <button type="submit" class="btn btn-secondary btn-sm btn-full" style="margin-top:10px;">Apply Price</button>
+          <button type="submit" class="btn btn-secondary btn-full" style="margin-top:14px; font-size:16px;">Apply Price</button>
         </div>
 
         <!-- Clear -->
-        <div class="filter-section" style="padding-top:8px;padding-bottom:8px;">
-          <a href="{% url 'catalog:list' %}" class="btn btn-secondary btn-sm btn-full">✕ Clear All Filters</a>
+        <div class="filter-section" style="padding-top:12px;padding-bottom:12px;">
+          <a href="{% url 'catalog:list' %}" class="btn btn-secondary btn-full" style="font-size:16px;">✕ Clear All Filters</a>
         </div>
       </form>
     </aside>
 
     <!-- Main Content -->
-    <div>
+    <div class="catalog-main">
       <!-- Catalog Header -->
       <div class="catalog-header">
         <div>
-          <h2 style="font-size:1.5rem;margin-bottom:4px;">
+          <h2 style="font-size:2rem;margin-bottom:8px;">
             {% if query %}Results for "{{ query }}"{% else %}All Laptops{% endif %}
           </h2>
           <span class="catalog-count">{{ total_count }} laptop{{ total_count|pluralize }} found</span>
@@ -169,6 +168,6 @@
       </div>
       {% endif %}
     </div>
+    </div>
   </div>
-</div>
 {% endblock %}
