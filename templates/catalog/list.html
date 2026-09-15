@@ -10,10 +10,10 @@
 
 {% block content %}
 <!-- Hero -->
-<section class="hero">
+<section class="hero landing-hero">
   <h1>Premium Laptop Inventory</h1>
   <p>Curated machines. Verified specs. Honest prices.</p>
-  <form id="filter-form" method="get" action="" class="search-bar" style="max-width:520px;margin:0 auto;" role="search">
+  <form id="filter-form-hero" method="get" action="" class="search-bar" role="search">
     {% for key, value in request.GET.items %}
       {% if key != 'q' and key != 'page' %}
         <input type="hidden" name="{{ key }}" value="{{ value }}">
@@ -21,9 +21,17 @@
     {% endfor %}
     <input type="text" name="q" id="search-input" value="{{ query }}" placeholder="Search brand, model, processor…" aria-label="Search laptops">
     <button type="submit" aria-label="Search">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     </button>
   </form>
+  
+  <div class="scroll-indicator">
+    <span>Scroll to explore</span>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <polyline points="19 12 12 19 5 12"></polyline>
+    </svg>
+  </div>
 </section>
 
 <div class="container page-content" style="padding-top:0;">
@@ -106,7 +114,7 @@
       <!-- Catalog Header -->
       <div class="catalog-header">
         <div>
-          <h2 style="font-size:1.1rem;margin-bottom:2px;">
+          <h2 style="font-size:1.5rem;margin-bottom:4px;">
             {% if query %}Results for "{{ query }}"{% else %}All Laptops{% endif %}
           </h2>
           <span class="catalog-count">{{ total_count }} laptop{{ total_count|pluralize }} found</span>
