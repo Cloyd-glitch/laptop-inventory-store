@@ -13,7 +13,7 @@
 <section class="hero landing-hero">
   <h1>Premium Laptop Inventory</h1>
   <p>Curated machines. Verified specs. Honest prices.</p>
-  <form id="filter-form-hero" method="get" action="" class="search-bar" role="search">
+  <form id="filter-form-hero" method="get" action="#catalog" class="search-bar" role="search">
     {% for key, value in request.GET.items %}
       {% if key != 'q' and key != 'page' %}
         <input type="hidden" name="{{ key }}" value="{{ value }}">
@@ -34,12 +34,12 @@
   </div>
 </section>
 
-  <div class="catalog-layout">
+  <div class="catalog-layout" id="catalog">
 
     <!-- Filter Sidebar -->
     <aside id="filter-sidebar" aria-label="Filters">
       <button class="btn btn-secondary btn-sm" id="filter-toggle" style="display:none;width:100%;margin-bottom:12px;">Show Filters</button>
-      <form id="filter-form" method="get" action="" class="filter-sidebar">
+      <form id="filter-form" method="get" action="#catalog" class="filter-sidebar">
         <!-- Preserve search query -->
         {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
 
@@ -103,7 +103,7 @@
 
         <!-- Clear -->
         <div class="filter-section" style="padding-top:12px;padding-bottom:12px;">
-          <a href="{% url 'catalog:list' %}" class="btn btn-secondary btn-full" style="font-size:16px;">✕ Clear All Filters</a>
+          <a href="{% url 'catalog:list' %}#catalog" class="btn btn-secondary btn-full" style="font-size:16px;">✕ Clear All Filters</a>
         </div>
       </form>
     </aside>
@@ -138,7 +138,7 @@
       {% if page_obj.has_other_pages %}
       <nav class="pagination" aria-label="Pagination">
         {% if page_obj.has_previous %}
-          <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" class="page-link" aria-label="Previous">‹</a>
+          <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}#catalog" class="page-link" aria-label="Previous">‹</a>
         {% else %}
           <span class="page-link disabled" aria-disabled="true">‹</span>
         {% endif %}
@@ -147,12 +147,12 @@
           {% if page_obj.number == num %}
             <span class="page-link active" aria-current="page">{{ num }}</span>
           {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}" class="page-link">{{ num }}</a>
+            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}#catalog" class="page-link">{{ num }}</a>
           {% endif %}
         {% endfor %}
 
         {% if page_obj.has_next %}
-          <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}" class="page-link" aria-label="Next">›</a>
+          <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}#catalog" class="page-link" aria-label="Next">›</a>
         {% else %}
           <span class="page-link disabled" aria-disabled="true">›</span>
         {% endif %}
@@ -164,7 +164,7 @@
         <div class="empty-icon">🔍</div>
         <h3>No laptops found</h3>
         <p>Try adjusting your filters or search term.</p>
-        <a href="{% url 'catalog:list' %}" class="btn btn-primary mt-16">Clear Filters</a>
+        <a href="{% url 'catalog:list' %}#catalog" class="btn btn-primary mt-16">Clear Filters</a>
       </div>
       {% endif %}
     </div>
