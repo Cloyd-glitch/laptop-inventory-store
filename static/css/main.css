@@ -36,7 +36,7 @@
 /* ─── Reset & Base ──────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html { }
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
@@ -471,7 +471,7 @@ select.form-input { cursor: pointer; }
 .alert-close:hover { opacity: 1; }
 
 /* ─── Filter Sidebar ─────────────────────────────────────── */
-.catalog-layout { display: flex; align-items: stretch; min-height: calc(100vh - 64px); }
+.catalog-layout { display: flex; align-items: stretch; min-height: calc(100vh - 64px); scroll-margin-top: 64px; }
 @media (max-width: 900px) { .catalog-layout { flex-direction: column; padding: 24px; } }
 
 .filter-sidebar {
