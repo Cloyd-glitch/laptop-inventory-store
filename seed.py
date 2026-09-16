@@ -141,22 +141,22 @@ def seed():
             
             # Assign custom distinct placeholder
             import urllib.request
-            import urllib.parse
             from django.core.files.base import ContentFile
             
-            text = f"{laptop.brand}\n{laptop.model_name}"
-            encoded_text = urllib.parse.quote(text)
-            url = f"https://placehold.co/800x600/2a2a2c/c98a4b.png?text={encoded_text}"
+            # Using LoremFlickr to get real laptop images
+            # Using the laptop id/pk as a lock to ensure a consistent, unique image for this laptop
+            laptop.save() # Save first so it has an ID
+            
+            url = f"https://loremflickr.com/800/600/laptop?lock={laptop.pk}"
             
             try:
                 req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
                 response = urllib.request.urlopen(req)
                 image_content = response.read()
-                laptop.main_image.save(f"placeholder_{laptop.slug}.png", ContentFile(image_content), save=False)
+                laptop.main_image.save(f"real_{laptop.slug}.jpg", ContentFile(image_content), save=True)
             except Exception as e:
                 print(f"Warning: Failed to fetch image for {laptop.slug}: {e}")
                     
-            laptop.save()
             created_count += 1
 
     print(f"{created_count} random laptops created.")
