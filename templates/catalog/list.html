@@ -129,7 +129,7 @@
           </div>
         {% endif %}
         <div style="flex: 1;">
-          <div style="font-size: 0.9rem; font-weight: 600; line-height: 1.2; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--text-primary);">{{ laptop.brand }} {{ laptop.model_name }}</div>
+          <div style="font-size: 0.9rem; font-weight: 600; line-height: 1.2; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--text-primary);">{{ laptop.brand }} {{ laptop.model_name }}</div>
           <div style="display: flex; justify-content: space-between; align-items: baseline;">
             <div class="text-accent" style="font-weight: 700;">₱{{ laptop.price|intcomma }}</div>
             <div style="text-decoration: line-through; color: var(--text-muted); font-size: 0.8rem;">₱{{ laptop.price|add:"5000"|intcomma }}</div>
