@@ -1,10 +1,32 @@
 <footer class="footer" role="contentinfo">
   <div class="container">
     <div class="footer-grid">
-      <!-- Brand -->
+      <!-- Brand & About -->
       <div>
         <div class="footer-brand">Laptop<span>Store</span></div>
         <p>Curated laptops with honest specs and premium service. Your trusted source for new, used, and refurbished machines.</p>
+        <span class="footer-trust-stats">500+ laptops sold &bull; Trusted by 200+ students</span>
+        <div class="footer-socials">
+          <a href="#" class="footer-social-icon" title="Facebook">FB</a>
+          <a href="#" class="footer-social-icon" title="Twitter">TW</a>
+          <a href="#" class="footer-social-icon" title="Instagram">IG</a>
+        </div>
+      </div>
+
+      <!-- Categories / Brands -->
+      <div>
+        <div class="footer-heading">Brands</div>
+        <ul>
+          <li><a href="{% url 'catalog:list' %}">All Laptops</a></li>
+          <li><a href="{% url 'catalog:list' %}?brand=ASUS">ASUS</a></li>
+          <li><a href="{% url 'catalog:list' %}?brand=Acer">Acer</a></li>
+          <li><a href="{% url 'catalog:list' %}?brand=Apple">Apple</a></li>
+          <li><a href="{% url 'catalog:list' %}?brand=Dell">Dell</a></li>
+          <li><a href="{% url 'catalog:list' %}?brand=HP">HP</a></li>
+          <li><a href="{% url 'catalog:list' %}?brand=Lenovo">Lenovo</a></li>
+          <li><a href="{% url 'catalog:list' %}?brand=MSI">MSI</a></li>
+          <li><a href="{% url 'catalog:list' %}?brand=Razer">Razer</a></li>
+        </ul>
       </div>
 
       <!-- Quick Links -->
@@ -12,10 +34,13 @@
         <div class="footer-heading">Quick Links</div>
         <ul>
           <li><a href="{% url 'catalog:list' %}">Browse Laptops</a></li>
+          <li><a href="#">Deals</a></li>
+          <li><a href="#">Compare Laptops</a></li>
+          <li><a href="#">Warranty Claims</a></li>
+          <li><a href="#">Bulk/Enterprise Orders</a></li>
           {% if user.is_authenticated %}
           <li><a href="{% url 'accounts:my_orders' %}">My Orders</a></li>
           <li><a href="{% url 'accounts:my_bookings' %}">My Bookings</a></li>
-          <li><a href="{% url 'accounts:profile' %}">My Profile</a></li>
           {% else %}
           <li><a href="{% url 'accounts:signup' %}">Create Account</a></li>
           <li><a href="{% url 'accounts:login' %}">Sign In</a></li>
@@ -23,14 +48,52 @@
         </ul>
       </div>
 
-      <!-- Contact -->
+      <!-- Customer Service -->
+      <div>
+        <div class="footer-heading">Customer Service</div>
+        <ul>
+          <li><a href="#">Shipping Info</a></li>
+          <li><a href="#">Returns & Warranty</a></li>
+          <li><a href="#">Payment Methods</a></li>
+          <li><a href="#">FAQs</a></li>
+          <li><a href="#">Track My Order</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact & Newsletter -->
       <div>
         <div class="footer-heading">Contact</div>
-        <ul>
+        <ul class="footer-contact-details">
           <li>📧 support@laptopstore.com</li>
           <li>📞 +63 900 000 0000</li>
           <li>📍 Metro Manila, Philippines</li>
+          <li>🕒 Mon-Sat, 9AM - 6PM</li>
+          <li>💬 <a href="#">Chat with us</a></li>
         </ul>
+
+        <div class="footer-heading" style="margin-top: 24px;">Newsletter</div>
+        <p style="font-size: 13px; line-height: 1.4; margin-bottom: 8px;">Get deals on new arrivals</p>
+        <form class="newsletter-form">
+          <input type="email" class="form-input" placeholder="Your email address" required>
+          <button type="submit" class="btn btn-primary">Subscribe</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Utility Row -->
+    <div class="footer-utility-row">
+      <ul class="footer-utility-nav">
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Sitemap</a></li>
+        <li><a href="#">Careers</a></li>
+      </ul>
+      <div class="footer-badges">
+        <span class="footer-badge" style="color: var(--success); font-weight: 700; border: 1px solid; padding: 2px 8px; border-radius: 4px; font-size: 11px;">SECURE CHECKOUT</span>
+        <!-- Placeholders for payment icons / trust badges -->
+        <span class="footer-badge" style="background: var(--bg-surface); border: 1px solid var(--border); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; color: var(--text-primary);">Visa</span>
+        <span class="footer-badge" style="background: var(--bg-surface); border: 1px solid var(--border); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; color: var(--text-primary);">MC</span>
+        <span class="footer-badge" style="background: var(--bg-surface); border: 1px solid var(--border); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; color: var(--text-primary);">GCash</span>
       </div>
     </div>
 
