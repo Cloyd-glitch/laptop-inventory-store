@@ -57,20 +57,207 @@
 </section>
 
 {% if not query and not selected_category and not selected_brand and not selected_condition and not min_price and not max_price %}
-<section class="container mb-32" style="margin-top: -20px; position: relative; z-index: 10;">
+<!-- 1. Featured Categories -->
+<section class="container mb-32 reveal-up" style="margin-top: -20px; position: relative; z-index: 10;">
   <div class="section-heading">
     <span class="section-label">Featured Categories</span>
   </div>
-  <div class="fb-collage fb-collage-3" style="height: 240px; margin-bottom: 40px;">
-    <a href="?q=Gaming#catalog" class="collage-item" style="background: radial-gradient(circle at center, #2a2a2c, #1e1e1f);">
-      <div class="collage-overlay"><span style="font-size: 1.8rem;">Gaming</span></div>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 40px;">
+    <a href="?q=Gaming#catalog" class="category-card" style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: var(--transition); padding: 32px 16px;">
+      <span style="font-size: 2.5rem;">🎮</span>
+      <span style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary);">Gaming</span>
     </a>
-    <a href="?category=ultrabook#catalog" class="collage-item" style="background: radial-gradient(circle at center, #2a2a2c, #1e1e1f);">
-      <div class="collage-overlay"><span style="font-size: 1.4rem;">Ultrabooks</span></div>
+    <a href="?q=Business#catalog" class="category-card" style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: var(--transition); padding: 32px 16px;">
+      <span style="font-size: 2.5rem;">💼</span>
+      <span style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary);">Business</span>
     </a>
-    <a href="?condition=refurbished#catalog" class="collage-item" style="background: radial-gradient(circle at center, #2a2a2c, #1e1e1f);">
-      <div class="collage-overlay"><span style="font-size: 1.4rem;">Refurbished</span></div>
+    <a href="?category=ultrabook#catalog" class="category-card" style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: var(--transition); padding: 32px 16px;">
+      <span style="font-size: 2.5rem;">⚡</span>
+      <span style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary);">Ultrabook</span>
     </a>
+    <a href="?condition=refurbished#catalog" class="category-card" style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: var(--transition); padding: 32px 16px;">
+      <span style="font-size: 2.5rem;">♻️</span>
+      <span style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary);">Refurbished</span>
+    </a>
+    <a href="?max_price=30000#catalog" class="category-card" style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: var(--transition); padding: 32px 16px;">
+      <span style="font-size: 2.5rem;">💰</span>
+      <span style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary);">Budget</span>
+    </a>
+    <a href="?q=Workstation#catalog" class="category-card" style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: var(--transition); padding: 32px 16px;">
+      <span style="font-size: 2.5rem;">🖥️</span>
+      <span style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary);">Workstation</span>
+    </a>
+  </div>
+</section>
+
+<!-- 2. Top Picks / Best Sellers Carousel -->
+<section class="container mb-32 reveal-up">
+  <div class="section-heading">
+    <span class="section-label">Top Picks</span>
+    <a href="#catalog" class="text-accent" style="font-size: 0.9rem; font-weight: 600; margin-left: auto;">View all ›</a>
+  </div>
+  <div class="carousel-container" style="display: flex; gap: 20px; overflow-x: auto; padding-bottom: 24px; scroll-snap-type: x mandatory; margin-bottom: 40px;">
+    {% for laptop in top_picks %}
+      <div style="min-width: 300px; max-width: 320px; scroll-snap-align: start; flex-shrink: 0;">
+        {% include 'partials/_laptop_card.html' with laptop=laptop %}
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- 3. Deals / Flash Sale Banner -->
+<section class="container mb-32 reveal-up">
+  <div class="deals-banner" style="background: linear-gradient(135deg, var(--bg-surface) 0%, #3a2218 100%); border: 1px solid var(--accent); border-radius: var(--radius-lg); padding: 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 48px;">
+    <div style="flex: 1; min-width: 250px;">
+      <h2 style="color: var(--accent); margin-bottom: 8px;">Flash Sale ⚡</h2>
+      <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 16px;">Up to 30% off selected gaming laptops and ultrabooks.</p>
+      <div class="countdown" style="display: flex; gap: 12px; font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 700;">
+        <div style="background: var(--bg-base); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);">12<span style="font-size:0.7rem; display:block; color:var(--text-muted); text-align:center;">HRS</span></div>
+        <div style="background: var(--bg-base); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);">45<span style="font-size:0.7rem; display:block; color:var(--text-muted); text-align:center;">MIN</span></div>
+        <div style="background: var(--bg-base); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);">30<span style="font-size:0.7rem; display:block; color:var(--text-muted); text-align:center;">SEC</span></div>
+      </div>
+    </div>
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 16px; min-width: 300px;">
+      <!-- Show top 2 from top_picks as deals -->
+      {% for laptop in top_picks|slice:":2" %}
+      <a href="{% url 'catalog:detail' laptop.slug %}" class="deal-card" style="background: var(--bg-base); border-radius: var(--radius-md); padding: 12px; display: flex; gap: 12px; align-items: center; border: 1px solid var(--border); transition: var(--transition);">
+        <img src="{{ laptop.main_image.url }}" alt="{{ laptop.name }}" style="width: 80px; height: 60px; object-fit: cover; border-radius: var(--radius-sm);">
+        <div style="flex: 1;">
+          <div style="font-size: 0.9rem; font-weight: 600; line-height: 1.2; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--text-primary);">{{ laptop.brand }} {{ laptop.model_name }}</div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="text-accent" style="font-weight: 700;">₱{{ laptop.price|intcomma }}</div>
+            <div style="text-decoration: line-through; color: var(--text-muted); font-size: 0.8rem;">₱{{ laptop.price|add:"5000"|intcomma }}</div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 4. Expanded Trust Bar -->
+<section class="container mb-32 reveal-up">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; background: var(--bg-surface); padding: 32px; border-radius: var(--radius-lg); border: 1px solid var(--border); margin-bottom: 48px;">
+    <div style="text-align: center;">
+      <div style="color: var(--accent); margin-bottom: 12px;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <h3 style="margin-bottom: 8px;">1-Year Parts Warranty</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">Comprehensive coverage for your peace of mind on all purchases.</p>
+    </div>
+    <div style="text-align: center; border-left: 1px solid var(--border); border-right: 1px solid var(--border); padding: 0 16px;">
+      <div style="color: var(--accent); margin-bottom: 12px;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div>
+      <h3 style="margin-bottom: 8px;">30-Day Return Window</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">Not perfectly satisfied? Return it hassle-free within 30 days.</p>
+    </div>
+    <div style="text-align: center;">
+      <div style="color: var(--accent); margin-bottom: 12px;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <h3 style="margin-bottom: 8px;">Verified by In-House Techs</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">Every machine undergoes a rigorous 50-point diagnostic check.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Brand Showcase Strip -->
+<section class="container mb-32 reveal-up">
+  <div class="section-heading">
+    <span class="section-label">Top Brands</span>
+  </div>
+  <div class="brand-strip" style="display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 24px 0; overflow-x: auto; margin-bottom: 48px;">
+    <div class="brand-logo">DELL</div>
+    <div class="brand-logo" style="font-style: italic;">hp</div>
+    <div class="brand-logo">Lenovo</div>
+    <div class="brand-logo">ASUS</div>
+    <div class="brand-logo" style="letter-spacing: 2px;">acer</div>
+    <div class="brand-logo"> Apple</div>
+  </div>
+</section>
+
+<!-- 6. Customer Reviews -->
+<section class="container mb-32 reveal-up">
+  <div class="section-heading">
+    <span class="section-label">What Our Customers Say</span>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 48px;">
+    <div class="review-card" style="background: var(--bg-surface); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border);">
+      <div style="color: var(--accent); margin-bottom: 12px; font-size: 1.2rem;">★★★★★</div>
+      <p style="color: var(--text-primary); font-style: italic; margin-bottom: 16px;">"The XPS 13 arrived exactly as described. The refurbished condition looked brand new. Super fast shipping too!"</p>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--bg-raised); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--text-muted);">JD</div>
+        <div>
+          <div style="font-weight: 600; font-size: 0.9rem;">John Doe</div>
+          <div style="color: var(--text-muted); font-size: 0.8rem;">Bought Dell XPS 13</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card" style="background: var(--bg-surface); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border);">
+      <div style="color: var(--accent); margin-bottom: 12px; font-size: 1.2rem;">★★★★★</div>
+      <p style="color: var(--text-primary); font-style: italic; margin-bottom: 16px;">"Incredible value for the Razer Blade. The customer service team helped me pick the perfect model for my rendering needs."</p>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--bg-raised); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--text-muted);">SM</div>
+        <div>
+          <div style="font-weight: 600; font-size: 0.9rem;">Sarah Miller</div>
+          <div style="color: var(--text-muted); font-size: 0.8rem;">Bought Razer Blade 15</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card" style="background: var(--bg-surface); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border);">
+      <div style="color: var(--accent); margin-bottom: 12px; font-size: 1.2rem;">★★★★☆</div>
+      <p style="color: var(--text-primary); font-style: italic; margin-bottom: 16px;">"Great selection of workstations. The ThinkPad P16 is a beast. Dropped one star because FedEx delayed it a day."</p>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--bg-raised); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--text-muted);">MT</div>
+        <div>
+          <div style="font-weight: 600; font-size: 0.9rem;">Mike Torres</div>
+          <div style="color: var(--text-muted); font-size: 0.8rem;">Bought Lenovo ThinkPad P16</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Buying Guide Teaser -->
+<section class="container mb-32 reveal-up">
+  <div class="section-heading">
+    <span class="section-label">Buying Guides & Tips</span>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 48px;">
+    <a href="#" class="guide-card" style="background: var(--bg-surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); transition: var(--transition); display: block;">
+      <div style="height: 140px; background: linear-gradient(135deg, #1e1e1f, #2a2a2c); display: flex; align-items: center; justify-content: center;">
+        <span style="font-size: 3rem;">🎬</span>
+      </div>
+      <div style="padding: 20px;">
+        <div style="color: var(--accent); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">Guide</div>
+        <h3 style="margin-bottom: 8px; font-size: 1.1rem; color: var(--text-primary);">How to choose a laptop for video editing</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">GPU vs CPU? How much RAM? Find out what really matters for Premiere Pro and DaVinci.</p>
+      </div>
+    </a>
+    <a href="#" class="guide-card" style="background: var(--bg-surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); transition: var(--transition); display: block;">
+      <div style="height: 140px; background: linear-gradient(135deg, #1e1e1f, #2a2a2c); display: flex; align-items: center; justify-content: center;">
+        <span style="font-size: 3rem;">♻️</span>
+      </div>
+      <div style="padding: 20px;">
+        <div style="color: var(--accent); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">Advice</div>
+        <h3 style="margin-bottom: 8px; font-size: 1.1rem; color: var(--text-primary);">Refurbished vs. Used: What's the difference?</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Don't get scammed. Learn our strict grading criteria and why refurbished is the smart choice.</p>
+      </div>
+    </a>
+    <a href="#" class="guide-card" style="background: var(--bg-surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); transition: var(--transition); display: block;">
+      <div style="height: 140px; background: linear-gradient(135deg, #1e1e1f, #2a2a2c); display: flex; align-items: center; justify-content: center;">
+        <span style="font-size: 3rem;">🔋</span>
+      </div>
+      <div style="padding: 20px;">
+        <div style="color: var(--accent); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">Maintenance</div>
+        <h3 style="margin-bottom: 8px; font-size: 1.1rem; color: var(--text-primary);">5 Ways to maximize your laptop's battery life</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Simple tweaks in Windows 11 to keep you unplugged for longer during your workday.</p>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- 8. Comparison Teaser -->
+<section class="container reveal-up" style="margin-bottom: 80px;">
+  <div style="background: linear-gradient(to right, var(--bg-surface), var(--bg-raised)); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; text-align: center; box-shadow: var(--shadow-card);">
+    <h2 style="margin-bottom: 12px; color: var(--text-primary);">Torn between two laptops?</h2>
+    <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 24px; max-width: 500px; margin-inline: auto;">Don't guess. Compare specs, performance, and features side-by-side to find your perfect match.</p>
+    <a href="#" class="btn btn-primary btn-lg">Compare Specs Now</a>
   </div>
 </section>
 {% endif %}

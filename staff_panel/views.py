@@ -36,17 +36,17 @@ def dashboard(request):
         bookings_qs = bookings_qs.filter(created_at__gte=start_date)
         payments_qs = payments_qs.filter(created_at__gte=start_date)
     
-    total_revenue = orders_qs.filter(status='COMPLETED').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    total_revenue = payments_qs.filter(status='VERIFIED').aggregate(Sum('amount'))['amount__sum'] or 0
 
-    # Line Chart Data (Daily Revenue for Completed Orders)
-    daily_revenue_qs = orders_qs.filter(status='COMPLETED') \
-        .annotate(date=TruncDate('created_at')) \
+    # Line Chart Data (Daily Revenue for Verified Payments)
+    daily_revenue_qs = payments_qs.filter(status='VERIFIED') \
+        .annotate(date=TruncDate('paid_at')) \
         .values('date') \
-        .annotate(revenue=Sum('total_amount')) \
+        .annotate(revenue=Sum('amount')) \
         .order_by('date')
     
-    line_labels = [entry['date'].strftime('%b %d') for entry in daily_revenue_qs]
-    line_data = [float(entry['revenue']) for entry in daily_revenue_qs]
+    line_labels = [entry['date'].strftime('%b %d') for entry in daily_revenue_qs if entry['date']]
+    line_data = [float(entry['revenue']) for entry in daily_revenue_qs if entry['date']]
     
     # Pie Chart Data (Order Status Distribution)
     status_counts_qs = orders_qs.values('status').annotate(count=Count('id'))
@@ -178,9 +178,7 @@ def payment_verify(request, pk):
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'verify':
-            payment.status = 'VERIFIED'
-            payment.paid_at = timezone.now()
-            payment.save()
+            payment.verify()
             messages.success(request, f"Payment #{payment.pk} verified.")
         elif action == 'reject':
             payment.status = 'FAILED'

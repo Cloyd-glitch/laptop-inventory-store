@@ -91,5 +91,56 @@ def seed():
         laptop3.save()
         print("Workstation created.")
 
+    # 5. Create 50+ More Random Laptops
+    import random
+    from django.utils.text import slugify
+
+    cat_business, _ = Category.objects.get_or_create(name='Business', slug='business')
+    cat_budget, _ = Category.objects.get_or_create(name='Budget', slug='budget')
+    
+    categories = [cat_gaming, cat_ultrabook, cat_workstation, cat_business, cat_budget]
+    brands = ['Dell', 'HP', 'Lenovo', 'ASUS', 'Acer', 'Apple', 'MSI', 'Razer']
+    processors = ['Intel Core i5-12400', 'Intel Core i7-13700H', 'Intel Core i9-13900HX', 'AMD Ryzen 5 7600', 'AMD Ryzen 7 7800X3D', 'Apple M2', 'Apple M3 Pro']
+    gpus = ['Integrated Graphics', 'Intel Iris Xe', 'NVIDIA GTX 1650', 'NVIDIA RTX 3060', 'NVIDIA RTX 4070', 'AMD Radeon RX 7600M']
+    rams = ['8GB DDR4', '16GB DDR5', '32GB DDR5', '64GB DDR5']
+    storages = ['256GB SSD', '512GB SSD', '1TB NVMe SSD', '2TB NVMe SSD']
+    conditions = [Laptop.Condition.NEW, Laptop.Condition.USED, Laptop.Condition.REFURBISHED]
+
+    created_count = 0
+    for i in range(1, 51):
+        brand = random.choice(brands)
+        model = f"ProBook {random.randint(1000, 9000)}" if brand == 'HP' else \
+                f"ThinkPad T{random.randint(14, 16)}" if brand == 'Lenovo' else \
+                f"ZenBook {random.randint(13, 15)}" if brand == 'ASUS' else \
+                f"MacBook Pro {random.randint(13, 16)}" if brand == 'Apple' else \
+                f"Inspiron {random.randint(3000, 7000)}" if brand == 'Dell' else \
+                f"Predator {random.randint(300, 700)}" if brand == 'Acer' else \
+                f"Stealth {random.randint(14, 17)}" if brand == 'MSI' else \
+                f"Blade {random.randint(14, 18)}"
+                
+        slug = slugify(f"{brand}-{model}-{i}")
+        
+        if not Laptop.objects.filter(slug=slug).exists():
+            Laptop.objects.create(
+                category=random.choice(categories),
+                brand=brand,
+                model_name=model,
+                slug=slug,
+                processor=random.choice(processors),
+                ram=random.choice(rams),
+                storage=random.choice(storages),
+                gpu=random.choice(gpus),
+                screen_size=f"{random.choice([13.3, 14.0, 15.6, 16.0, 17.3])} inch",
+                operating_system='Windows 11' if brand != 'Apple' else 'macOS',
+                condition=random.choice(conditions),
+                price=round(random.uniform(20000, 150000), 2),
+                stock_quantity=random.randint(0, 25),
+                description=f'A highly capable {brand} laptop suitable for various tasks.',
+                is_active=True
+            )
+            created_count += 1
+
+    print(f"{created_count} random laptops created.")
+
 if __name__ == '__main__':
     seed()

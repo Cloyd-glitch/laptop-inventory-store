@@ -68,6 +68,7 @@ def catalog_list_view(request):
         'max_price': max_price,
         'sort': sort,
         'total_count': laptops.count(),
+        'top_picks': Laptop.objects.filter(is_active=True)[:8],
     }
     return render(request, 'catalog/list.html', context)
 
