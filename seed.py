@@ -121,7 +121,7 @@ def seed():
         slug = slugify(f"{brand}-{model}-{i}")
         
         if not Laptop.objects.filter(slug=slug).exists():
-            Laptop.objects.create(
+            laptop = Laptop(
                 category=random.choice(categories),
                 brand=brand,
                 model_name=model,
@@ -138,6 +138,24 @@ def seed():
                 description=f'A highly capable {brand} laptop suitable for various tasks.',
                 is_active=True
             )
+            
+            # Assign random image
+            valid_images = []
+            artifact_dir = r"C:\Users\HP\.gemini\antigravity-ide\brain\56055858-9c07-480a-ab0b-02a77c112a39"
+            img1 = os.path.join(artifact_dir, 'gaming_laptop_generic_1789536102422.jpg')
+            img2 = os.path.join(artifact_dir, 'ultrabook_generic_1789536170215.jpg')
+            img3 = os.path.join(artifact_dir, 'workstation_generic_1789536183083.jpg')
+            
+            for img in [img1, img2, img3]:
+                if os.path.exists(img):
+                    valid_images.append(img)
+                    
+            if valid_images:
+                img_path = random.choice(valid_images)
+                with open(img_path, 'rb') as f:
+                    laptop.main_image.save(f'generic_{laptop.slug}.jpg', File(f), save=False)
+                    
+            laptop.save()
             created_count += 1
 
     print(f"{created_count} random laptops created.")
