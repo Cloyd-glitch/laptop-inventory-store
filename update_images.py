@@ -1,38 +1,47 @@
 import os
 import django
-import random
+import urllib.request
+import urllib.parse
+from django.core.files.base import ContentFile
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
 
-from django.core.files import File
 from catalog.models import Laptop
 
-def assign_images():
-    artifact_dir = r"C:\Users\HP\.gemini\antigravity-ide\brain\56055858-9c07-480a-ab0b-02a77c112a39"
-    
-    images = [
-        os.path.join(artifact_dir, 'gaming_laptop_generic_1789536102422.jpg'),
-        os.path.join(artifact_dir, 'ultrabook_generic_1789536170215.jpg'),
-        os.path.join(artifact_dir, 'workstation_generic_1789536183083.jpg')
-    ]
-    
-    valid_images = [img for img in images if os.path.exists(img)]
-    
-    if not valid_images:
-        print("No images found to assign.")
-        return
-
-    laptops_without_images = Laptop.objects.filter(main_image='')
+def update_placeholders():
+    laptops = Laptop.objects.all()
     count = 0
     
-    for laptop in laptops_without_images:
-        img_path = random.choice(valid_images)
-        with open(img_path, 'rb') as f:
-            laptop.main_image.save(f'generic_{laptop.pk}.jpg', File(f), save=True)
-        count += 1
-        
-    print(f"Assigned images to {count} laptops.")
+    for laptop in laptops:
+        # We want to replace the generic ones and any missing ones
+        if not laptop.main_image or 'generic' in laptop.main_image.name or 'picsum' in laptop.main_image.name:
+            # Create a custom placeholder with the laptop's exact name and brand
+            # Using the colors from our design system: Background #2a2a2c, Text #c98a4b
+            text = f"{laptop.brand}\n{laptop.model_name}"
+            encoded_text = urllib.parse.quote(text)
+            url = f"https://placehold.co/800x600/2a2a2c/c98a4b.png?text={encoded_text}"
+            
+            try:
+                # Add a user-agent to avoid being blocked
+                req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                response = urllib.request.urlopen(req)
+                image_content = response.read()
+                
+                # Save the new distinct image
+                filename = f"placeholder_{laptop.slug}.png"
+                
+                # Delete old image if it exists to avoid bloat
+                if laptop.main_image:
+                    laptop.main_image.delete(save=False)
+                    
+                laptop.main_image.save(filename, ContentFile(image_content), save=True)
+                count += 1
+                print(f"Assigned distinct placeholder to {laptop.brand} {laptop.model_name}")
+            except Exception as e:
+                print(f"Failed for {laptop.slug}: {e}")
+                
+    print(f"\nSuccessfully generated {count} distinct brand images.")
 
 if __name__ == '__main__':
-    assign_images()
+    update_placeholders()

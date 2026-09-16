@@ -139,21 +139,22 @@ def seed():
                 is_active=True
             )
             
-            # Assign random image
-            valid_images = []
-            artifact_dir = r"C:\Users\HP\.gemini\antigravity-ide\brain\56055858-9c07-480a-ab0b-02a77c112a39"
-            img1 = os.path.join(artifact_dir, 'gaming_laptop_generic_1789536102422.jpg')
-            img2 = os.path.join(artifact_dir, 'ultrabook_generic_1789536170215.jpg')
-            img3 = os.path.join(artifact_dir, 'workstation_generic_1789536183083.jpg')
+            # Assign custom distinct placeholder
+            import urllib.request
+            import urllib.parse
+            from django.core.files.base import ContentFile
             
-            for img in [img1, img2, img3]:
-                if os.path.exists(img):
-                    valid_images.append(img)
-                    
-            if valid_images:
-                img_path = random.choice(valid_images)
-                with open(img_path, 'rb') as f:
-                    laptop.main_image.save(f'generic_{laptop.slug}.jpg', File(f), save=False)
+            text = f"{laptop.brand}\n{laptop.model_name}"
+            encoded_text = urllib.parse.quote(text)
+            url = f"https://placehold.co/800x600/2a2a2c/c98a4b.png?text={encoded_text}"
+            
+            try:
+                req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                response = urllib.request.urlopen(req)
+                image_content = response.read()
+                laptop.main_image.save(f"placeholder_{laptop.slug}.png", ContentFile(image_content), save=False)
+            except Exception as e:
+                print(f"Warning: Failed to fetch image for {laptop.slug}: {e}")
                     
             laptop.save()
             created_count += 1
